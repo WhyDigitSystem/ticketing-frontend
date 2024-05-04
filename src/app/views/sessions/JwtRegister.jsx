@@ -1,12 +1,16 @@
+import { LoadingButton } from "@mui/lab";
+import { Box, Card, Checkbox, Grid, TextField, styled, useTheme } from "@mui/material";
+import { encryptPassword } from "app/utils/PasswordEnc";
+import axios from "axios";
 import { Formik } from "formik";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Card, Checkbox, Grid, TextField, useTheme, Box, styled } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 
-import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
+import useAuth from "app/hooks/useAuth";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -59,21 +63,82 @@ export default function JwtRegister() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleFormSubmit = (values) => {
-    setLoading(true);
+  const resetForm = () => {
+    const initialValues = {
+      email: "",
+      password: "",
+      username: "",
+      remember: true
+    };
+  };
+
+  // const handleFormSubmit = (values) => {
+  //   setLoading(true);
+
+  //   try {
+  //     register(values.email, values.username, values.password);
+  //     navigate("/");
+  //     setLoading(false);
+  //   } catch (e) {
+  //     console.log(e);
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleFormSubmit = async (values) => {
+    // Prepare the user registration data
+
+    const userData = {
+      firstName: values.username,
+      email: values.email,
+      password: encryptPassword(values.password),
+      userName: values.email
+    };
+
+    console.log("Test", userData);
 
     try {
-      register(values.email, values.username, values.password);
-      navigate("/");
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/user/signup`,
+        userData,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      if (!response.data.status) {
+        // Handle authentication failure, display an error message, etc.
+        toast.error(response.data.paramObjectsMap.errorMessage, {
+          autoClose: 2000,
+          theme: "colored"
+        });
+        console.log("Test1", userData);
+      } else {
+        // Successful registration, perform actions like storing tokens and redirecting
+        localStorage.setItem("token", "YourAuthTokenHere"); // Replace with the actual token
+        resetForm();
+        // window.location.href = "/login";
+
+        toast.success(response.data.paramObjectsMap.message, {
+          autoClose: 2000,
+          theme: "colored"
+        });
+        setTimeout(() => {
+          navigate("/session/signin");
+        }, 2000);
+      }
+    } catch (error) {
+      localStorage.setItem("AccountCreated", false);
     }
   };
 
   return (
     <JWTRegister>
+      <div>
+        <ToastContainer />
+      </div>
       <Card className="card">
         <Grid container>
           <Grid item sm={6} xs={12}>
@@ -91,7 +156,8 @@ export default function JwtRegister() {
               <Formik
                 onSubmit={handleFormSubmit}
                 initialValues={initialValues}
-                validationSchema={validationSchema}>
+                validationSchema={validationSchema}
+              >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <TextField
@@ -157,7 +223,8 @@ export default function JwtRegister() {
                       color="primary"
                       loading={loading}
                       variant="contained"
-                      sx={{ mb: 2, mt: 3 }}>
+                      sx={{ mb: 2, mt: 3 }}
+                    >
                       Register
                     </LoadingButton>
 
@@ -165,7 +232,8 @@ export default function JwtRegister() {
                       Already have an account?
                       <NavLink
                         to="/session/signin"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}>
+                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                      >
                         Login
                       </NavLink>
                     </Paragraph>
