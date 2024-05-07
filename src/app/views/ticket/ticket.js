@@ -1,9 +1,10 @@
-import { Tooltip } from "@mui/material";
+import { TextareaAutosize, Tooltip } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
+import TextArea from "@mui/material/TextField"
 import { useTheme } from "@mui/material/styles";
 // import { AiOutlineSearch, AiOutlineWallet } from 'react-icons/ai';
 // import { BsListTask } from 'react-icons/bs';
@@ -13,7 +14,10 @@ import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar, ButtonBase } from "@mui/material";
 import { useRef } from "react";
-import "react-tabs/style/react-tabs.css";
+
+import Button from "@mui/material/Button";
+// import { FaArrowCircleLeft, FaCloudUploadAlt } from "react-icons/fa";
+// import "react-tabs/style/react-tabs.css";
 
 const Ticket = () => {
   //   const buttonStyle = {
@@ -131,7 +135,7 @@ const Ticket = () => {
           <div className="col-md-4 mb-3">
             <TextField
               id="outlined-textarea"
-              label="Chapter"
+              label="Ticket Id"
               placeholder="Placeholder"
               multiline
               variant="outlined"
@@ -142,7 +146,83 @@ const Ticket = () => {
           <div className="col-md-4 mb-3">
             <TextField
               id="outlined-textarea"
-              label="Sub Chapter"
+              label="Date"
+              placeholder="Placeholder"
+              multiline
+              variant="outlined"
+              size="small"
+              type="Date"
+              fullWidth
+            />
+          </div>
+
+          <div className="col-md-4 mb-3">
+            <TextField
+              id="outlined-textarea"
+              label="Title"
+              placeholder="Placeholder"
+              multiline
+              variant="outlined"
+              size="small"
+              fullWidth
+            />
+          </div>
+          <div className="col-md-8 mb-3">
+            <TextArea 
+              rows={4}
+              cols={40}
+              id="Old Rate"
+              label="Description"
+              placeholder="Placeholder"
+              multiline
+              variant="outlined"
+              size="small"
+              fullWidth
+            />
+          </div>
+         
+<div className="col-md-4 mb-3" >
+<input
+                    type="file"
+                    id="file-input"
+                    multiple
+                    style={{ display: "none" }}
+                    // onChange={(e) => handleFileUpload(e.target.files)}
+                  />
+                  <label htmlFor="file-input">
+                    <Button
+                      variant="contained"
+                      component="span"
+                      // startIcon={<FaCloudUploadAlt />}
+                    >
+                      Upload file
+                    </Button>
+                  </label>
+</div>
+
+           
+          <div className="col-md-4 mb-3">
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                // value={age}
+                label="Priority"
+                // onChange={handleChange}
+              >
+                <MenuItem value="High">High</MenuItem>
+                <MenuItem value="Medium">Medium</MenuItem>
+                <MenuItem value="Normal">Normal</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+      
+
+          <div className="col-md-4 mb-3">
+            <TextField
+              id="outlined-textarea"
+              label="Status"
               placeholder="Placeholder"
               multiline
               variant="outlined"
@@ -154,7 +234,7 @@ const Ticket = () => {
           <div className="col-md-4 mb-3">
             <TextField
               id="outlined-textarea"
-              label="HSN Code"
+              label="Assigned To"
               placeholder="Placeholder"
               multiline
               variant="outlined"
@@ -162,42 +242,30 @@ const Ticket = () => {
               fullWidth
             />
           </div>
-          <div className="col-md-4 mb-3">
-            <TextField
-              id="Old Rate"
-              label="Branch/Location"
-              placeholder="Placeholder"
-              multiline
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
+
           <div className="col-md-4 mb-3">
             <TextField
               id="outlined-textarea"
-              label="New Rate"
+              label="Completed On"
+              placeholder="Placeholder"
+              multiline
+              variant="outlined"
+              type="Date"
+              size="small"
+              fullWidth
+            />
+          </div>
+
+          <div className="col-md-4 mb-3">
+            <TextField
+              id="outlined-textarea"
+              label="Completed By"
               placeholder="Placeholder"
               multiline
               variant="outlined"
               size="small"
               fullWidth
             />
-          </div>
-          <div className="col-md-4 mb-3">
-            <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Excepmted</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                // value={age}
-                label="Excepmted"
-                // onChange={handleChange}
-              >
-                <MenuItem value="0">Yes</MenuItem>
-                <MenuItem value="1">No</MenuItem>
-              </Select>
-            </FormControl>
           </div>
         </div>
       </div>
