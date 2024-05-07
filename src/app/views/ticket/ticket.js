@@ -1,10 +1,9 @@
-import { TextareaAutosize, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import TextArea from "@mui/material/TextField"
+import { default as TextArea, default as TextField } from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 // import { AiOutlineSearch, AiOutlineWallet } from 'react-icons/ai';
 // import { BsListTask } from 'react-icons/bs';
@@ -13,7 +12,7 @@ import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBullete
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar, ButtonBase } from "@mui/material";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import Button from "@mui/material/Button";
 // import { FaArrowCircleLeft, FaCloudUploadAlt } from "react-icons/fa";
@@ -25,6 +24,18 @@ const Ticket = () => {
   //   };
   const theme = useTheme();
   const anchorRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  const handleFileUpload = (files) => {
+    setUploadedFiles(files);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+    }
+    const fileNames = Array.from(files).map((file) => file.name);
+    // Update the selectedFiles state with the array of file names
+    setSelectedFiles(fileNames);
+  };
 
   return (
     <>
@@ -168,7 +179,7 @@ const Ticket = () => {
             />
           </div>
           <div className="col-md-8 mb-3">
-            <TextArea 
+            <TextArea
               rows={4}
               cols={40}
               id="Old Rate"
@@ -180,27 +191,31 @@ const Ticket = () => {
               fullWidth
             />
           </div>
-         
-<div className="col-md-4 mb-3" >
-<input
-                    type="file"
-                    id="file-input"
-                    multiple
-                    style={{ display: "none" }}
-                    // onChange={(e) => handleFileUpload(e.target.files)}
-                  />
-                  <label htmlFor="file-input">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      // startIcon={<FaCloudUploadAlt />}
-                    >
-                      Upload file
-                    </Button>
-                  </label>
-</div>
 
-           
+          <div className="col-md-4 mb-3">
+            <input
+              type="file"
+              id="file-input"
+              multiple
+              style={{ display: "none" }}
+              onChange={(e) => handleFileUpload(e.target.files)}
+            />
+            <label htmlFor="file-input">
+              <Button
+                variant="contained"
+                component="span"
+                // startIcon={<FaCloudUploadAlt />}
+              >
+                Upload file
+              </Button>
+            </label>
+            {selectedFiles.map((fileName, index) => (
+              <div style={{ font: "10px" }} key={index}>
+                {fileName}
+              </div>
+            ))}
+          </div>
+
           <div className="col-md-4 mb-3">
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Priority</InputLabel>
@@ -217,7 +232,6 @@ const Ticket = () => {
               </Select>
             </FormControl>
           </div>
-      
 
           <div className="col-md-4 mb-3">
             <TextField
