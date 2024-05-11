@@ -23,6 +23,10 @@ const TicketNew = Loadable(lazy(() => import("app/views/ticket/ticket")));
 
 const AllTickets = Loadable(lazy(() => import("app/views/ticket/alltickets")));
 
+const EmployeeNew = Loadable(lazy(() => import("app/views/employee/employee")));
+
+const AllEmployees = Loadable(lazy(() => import("app/views/employee/allemployees")));
+
 const routes = [
   {
     element: (
@@ -37,7 +41,9 @@ const routes = [
       // e-chart route
       // { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
       { path: "/ticket/ticket", element: <TicketNew /> },
-      { path: "/ticket/alltickets", element: <AllTickets /> }
+      { path: "/ticket/alltickets", element: <AllTickets /> },
+      { path: "/employee/employee", element: <EmployeeNew /> },
+      { path: "/ticket/allemployees", element: <AllEmployees /> },
     ]
   },
 
