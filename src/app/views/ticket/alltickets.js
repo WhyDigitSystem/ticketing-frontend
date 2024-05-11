@@ -1,22 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Icon,
+  IconButton,
+  MenuItem,
+  Select,
   Table,
-  styled,
-  TableRow,
   TableBody,
   TableCell,
   TableHead,
-  IconButton,
-  TablePagination, TableContainer, Paper
+  TablePagination,
+  TableRow,
+  styled
 } from "@mui/material";
-
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { useEffect, useState } from "react";
 
 import axios from "axios";
 
@@ -24,10 +20,14 @@ import axios from "axios";
 const StyledTable = styled(Table)(() => ({
   whiteSpace: "pre",
   "& thead": {
-    "& tr": { "& th": { paddingLeft: 0, paddingRight: 0 } }
+    "& tr": {
+      "& th": { paddingLeft: 0, paddingRight: 0 }
+    }
   },
   "& tbody": {
-    "& tr": { "& td": { paddingLeft: 0, textTransform: "capitalize" } }
+    "& tr": {
+      "& td": { paddingLeft: 0, textTransform: "capitalize" }
+    }
   }
 }));
 
@@ -100,21 +100,13 @@ const subscribarList = [
 export default function AllTickets() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [add, setAdd] = useState(false);
   const [data, setData] = useState([]);
-  const [openView, setOpenView] = useState(false);
-  const [orgId, setOrgId] = useState(localStorage.getItem("orgId"));
-  const [selectedRowData, setSelectedRowData] = useState(null);
-  const [selectedRowId, setSelectedRowId] = useState(null);
-
-
+  const [statusOptions, setStatusOptions] = useState(["Yet to Assign", "Assigned"]);
+  const [selectedStatus, setSelectedStatus] = useState({});
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
   };
-
-
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
@@ -127,26 +119,28 @@ export default function AllTickets() {
 
   const getTicketData = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`);
 
       if (response.status === 200) {
         setData(response.data.paramObjectsMap.ticketVO.reverse());
+        // Initialize selectedStatus state with default values for each row
+        const initialStatus = {};
+        response.data.paramObjectsMap.ticketVO.forEach((ticket) => {
+          initialStatus[ticket.id] = ticket.status || ""; // Set default status to an empty string
+        });
+        setSelectedStatus(initialStatus);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const handleViewRow = (row) => {
-    setSelectedRowData(row.original);
-    console.log("setSelectedRowData", row.original);
-    setOpenView(true);
+  const handleStatusChange = (e, ticketId) => {
+    const newStatus = { ...selectedStatus, [ticketId]: e.target.value };
+    setSelectedStatus(newStatus);
   };
 
   return (
-
     <div className="card w-full p-6 bg-base-100 shadow-xl" style={{ padding: "20px" }}>
       <div className="row d-flex mt-3 ml">
         <div
@@ -166,22 +160,35 @@ export default function AllTickets() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((data, index) => (
-                    <TableRow key={index}>
-                      <TableCell align="left">{ }</TableCell>
-                      <TableCell align="left">{data.docdate}</TableCell>
-                      <TableCell align="left">{data.title}</TableCell>
-                      <TableCell align="left">{data.priority}</TableCell>
-                      <TableCell align="left">{data.status}</TableCell>
-                      <TableCell align="right">
-                        <IconButton>
-                          <Icon color="error">close</Icon>
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {data.map((ticket, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="left">{}</TableCell>
+                    <TableCell align="left">{ticket.docdate}</TableCell>
+                    <TableCell align="left">{ticket.title}</TableCell>
+                    <TableCell align="left">{ticket.priority}</TableCell>
+                    <TableCell align="left">
+                      <Select
+                        defaultValue={selectedStatus[ticket.id] || ""}
+                        onChange={(e) => handleStatusChange(e, ticket.id)}
+                        sx={{ minWidth: 120 }}
+                      >
+                        <MenuItem value="" disabled>
+                          Status
+                        </MenuItem>
+                        {statusOptions.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton>
+                        <Icon color="error">close</Icon>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </StyledTable>
 
@@ -201,46 +208,5 @@ export default function AllTickets() {
         </div>
       </div>
     </div>
-
-
-    // <DialogContent className="mt-4">
-    //   {selectedRowData && (
-    //     <TableContainer component={Paper}>
-    //       <Table>
-    //         <TableBody>
-    //           <TableRow>
-    //             <TableCell>Ticket ID</TableCell>
-    //             <TableCell>{ }</TableCell>
-    //           </TableRow>
-    //           <TableRow>
-    //             <TableCell>Date</TableCell>
-    //             <TableCell>{selectedRowData.docdate}</TableCell>
-    //           </TableRow>
-    //           <TableRow>
-    //             <TableCell>Title</TableCell>
-    //             <TableCell>{selectedRowData.title}</TableCell>
-    //           </TableRow>
-    //           <TableRow>
-    //             <TableCell>Priority</TableCell>
-    //             <TableCell>{selectedRowData.priority}</TableCell>
-    //           </TableRow>
-    //           <TableRow>
-    //             <TableCell>Status</TableCell>
-    //             <TableCell>
-    //               {selectedRowData.status}
-    //             </TableCell>
-    //           </TableRow>
-
-
-    //           {/* <TableRow>
-    //                                     <TableCell>Status</TableCell>
-    //                                     <TableCell>{selectedRowData.active}</TableCell>
-    //                                 </TableRow> */}
-    //         </TableBody>
-    //       </Table>
-    //     </TableContainer>
-    //   )}
-    // </DialogContent>
-
   );
 }
