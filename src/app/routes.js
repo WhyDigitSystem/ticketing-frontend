@@ -21,6 +21,8 @@ const Analytics = Loadable(lazy(() => import("app/views/dashboard/Analytics")));
 
 const TicketNew = Loadable(lazy(() => import("app/views/ticket/ticket")));
 
+const AllTickets = Loadable(lazy(() => import("app/views/ticket/alltickets")));
+
 const routes = [
   {
     element: (
@@ -33,8 +35,9 @@ const routes = [
       // dashboard route
       { path: "/dashboard/default", element: <Analytics />, auth: authRoles.admin },
       // e-chart route
-      { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
-      { path: "/ticket/ticket", element: <TicketNew /> }
+      // { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
+      { path: "/ticket/ticket", element: <TicketNew /> },
+      { path: "/ticket/alltickets", element: <AllTickets /> }
     ]
   },
 

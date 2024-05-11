@@ -1,7 +1,8 @@
 export const navigations = [
   { name: "Dashboard", path: "/dashboard/default", icon: "dashboard" },
-  { name: "Ticket", path: "/ticket/ticket", icon: "dashboard" },
-  { label: "PAGES", type: "label" },
+  { name: "Ticket", path: "/ticket/ticket", icon: "addbox" },
+  { name: "AllTickets", path: "/ticket/alltickets", icon: "reorder" },
+  // { label: "PAGES", type: "label" },
   // {
   //   name: "Session/Auth",
   //   icon: "security",
@@ -13,17 +14,17 @@ export const navigations = [
   //   ]
   // },
 
-  { label: "Components", type: "label" },
+  // { label: "Components", type: "label" },
 
-  {
-    name: "Charts",
-    icon: "trending_up",
-    children: [{ name: "Echarts", path: "/charts/echarts", iconText: "E" }]
-  },
-  {
-    name: "Documentation",
-    icon: "launch",
-    type: "extLink",
-    path: "http://demos.ui-lib.com/matx-react-doc/"
-  }
+  // {
+  //   name: "Charts",
+  //   icon: "trending_up",
+  //   children: [{ name: "Echarts", path: "/charts/echarts", iconText: "E" }]
+  // },
+  // {
+  //   name: "Documentation",
+  //   icon: "launch",
+  //   type: "extLink",
+  //   path: "http://demos.ui-lib.com/matx-react-doc/"
+  // }
 ];

@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.ticketheader {
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  text-shadow: 2px 1px 1px #000;
+  filter: saturate(150%) drop-shadow(0 0 1rem gray);
+}
