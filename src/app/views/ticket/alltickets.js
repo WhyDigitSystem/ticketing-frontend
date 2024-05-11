@@ -117,6 +117,21 @@ export default function AllTickets() {
     getTicketData();
   }, []);
 
+
+  const getEmployeeData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/employee/getAllEmployee`
+      );
+
+      if (response.status === 200) {
+        setData(response.data.paramObjectsMap.employeeVO.reverse());
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const getTicketData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`);
@@ -156,13 +171,14 @@ export default function AllTickets() {
                   <TableCell align="left">Title</TableCell>
                   <TableCell align="left">Priority</TableCell>
                   <TableCell align="left">Status</TableCell>
+                  <TableCell align="left">Assign To</TableCell>
                   <TableCell align="right">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data.map((ticket, index) => (
                   <TableRow key={index}>
-                    <TableCell align="left">{}</TableCell>
+                    <TableCell align="left">{ }</TableCell>
                     <TableCell align="left">{ticket.docdate}</TableCell>
                     <TableCell align="left">{ticket.title}</TableCell>
                     <TableCell align="left">{ticket.priority}</TableCell>
