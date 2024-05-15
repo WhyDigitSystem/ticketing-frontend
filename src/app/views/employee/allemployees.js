@@ -42,6 +42,7 @@ export default function AllEmloyees() {
     const [openView, setOpenView] = useState(false);
     const [orgId, setOrgId] = useState(localStorage.getItem("orgId"));
     const [selectedRowData, setSelectedRowData] = useState(null);
+    const [edit, setEdit] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState(null);
 
 
@@ -80,6 +81,8 @@ export default function AllEmloyees() {
         console.log("setSelectedRowData", row.original);
         setOpenView(true);
     };
+
+
 
     return (
 

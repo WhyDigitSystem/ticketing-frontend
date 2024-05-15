@@ -276,13 +276,35 @@ const Ticket = () => {
               label="Title"
               name="title"
               value={title}
-              placeholder="Placeholder"
+              placeholder=""
               multiline
               variant="outlined"
               size="small"
               fullWidth
             />
           </div>
+
+
+          {<div className="col-md-2 mb-3">
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="priority"
+                onChange={handleInputChange}
+                value={priority}
+                placeholder=""
+                // value={age}
+                label="Priority"
+              // onChange={handleChange}
+              >
+                <MenuItem value="High">High</MenuItem>
+                <MenuItem value="Medium">Medium</MenuItem>
+                <MenuItem value="Normal">Normal</MenuItem>
+              </Select>
+            </FormControl>
+          </div>}
 
           <div className="col-md-12 mb-3">
             <TextArea
@@ -293,7 +315,7 @@ const Ticket = () => {
               onChange={handleInputChange}
               label="Description"
               value={description}
-              placeholder="Placeholder"
+              placeholder=""
               multiline
               variant="outlined"
               size="small"
@@ -324,25 +346,6 @@ const Ticket = () => {
 
 
 
-          {<div className="col-md-2 mb-3">
-            <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="priority"
-                onChange={handleInputChange}
-                value={priority}
-                // value={age}
-                label="Priority"
-              // onChange={handleChange}
-              >
-                <MenuItem value="High">High</MenuItem>
-                <MenuItem value="Medium">Medium</MenuItem>
-                <MenuItem value="Normal">Normal</MenuItem>
-              </Select>
-            </FormControl>
-          </div>}
 
 
           <div className="col-md-2 mb-3">
@@ -353,6 +356,7 @@ const Ticket = () => {
               onChange={handleInputChange}
               placeholder="Placeholder"
               multiline
+              hidden
               variant="outlined"
               size="small"
               fullWidth
@@ -367,6 +371,7 @@ const Ticket = () => {
               onChange={handleInputChange}
               placeholder="Placeholder"
               multiline
+              hidden
               variant="outlined"
               size="small"
               fullWidth
@@ -381,6 +386,7 @@ const Ticket = () => {
               placeholder="Placeholder"
               onChange={handleInputChange}
               multiline
+              hidden
               variant="outlined"
               type="Date"
               size="small"
@@ -395,6 +401,7 @@ const Ticket = () => {
               name="completedby"
               onChange={handleInputChange}
               placeholder="Placeholder"
+              hidden
               multiline
               variant="outlined"
               size="small"
