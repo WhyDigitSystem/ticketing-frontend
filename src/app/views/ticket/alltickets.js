@@ -1,21 +1,14 @@
 import { Box, IconButton, MenuItem, Select, Table, styled } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import { MaterialReactTable } from "material-react-table";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-import dayjs from "dayjs";
-import Button from "@mui/material/Button";
-import { date } from "yup";
-
 import axios from "axios";
+import dayjs from "dayjs";
+import "react-toastify/dist/ReactToastify.css";
 
 // STYLED COMPONENT
 const StyledTable = styled(Table)(() => ({
@@ -55,8 +48,6 @@ export default function AllTickets() {
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
   const [assignedto, setAssignedTo] = useState({});
-
-
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -111,12 +102,12 @@ export default function AllTickets() {
 
   const handleStatusChange = (e, ticketId) => {
     const newStatus = { ...selectedStatus, [ticketId]: e.target.value };
-    setSelectedStatus(e.target.value);
+    setSelectedStatus(newStatus);
   };
 
   const handleEmployeeChange = (e, ticketId) => {
     const newEmployee = { ...employee, [ticketId]: e.target.value };
-    setEmployee(e.target.value);
+    setEmployee(newEmployee);
   };
 
   const handleEditRow = (row) => {
@@ -140,14 +131,11 @@ export default function AllTickets() {
         enableColumnOrdering: false,
         enableEditing: false,
         Cell: ({ row }) => (
-
-
           <div>
             <IconButton onClick={() => UpdateTicket(row)}>
               <EditIcon />
             </IconButton>
           </div>
-
         )
       },
       {
@@ -185,7 +173,7 @@ export default function AllTickets() {
         Cell: ({ row }) => (
           <Select
             value={selectedStatus[row.original.id] || ""}
-            onChange={(e) => handleStatusChange(e)}
+            onChange={(e) => handleStatusChange(e, row.original.id)}
             sx={{ minWidth: 120 }}
           >
             {statusOptions.map((option) => (
@@ -223,7 +211,6 @@ export default function AllTickets() {
           </Select>
         )
       },
-
       {
         accessorKey: "title",
         header: "Title",
@@ -250,33 +237,30 @@ export default function AllTickets() {
     [selectedStatus, employee, employeedata]
   );
 
+  const UpdateTicket = (row) => {
+    const ticketId = row.original.id;
+    const updatedStatus = selectedStatus[ticketId];
+    const updatedEmployee = employee[ticketId];
 
-
-  const UpdateTicket = () => {
-    console.log("test");
     const errors = {};
+    if (!updatedStatus) errors.status = "Status is required";
+    if (!updatedEmployee) errors.assignedto = "Assigned To is required";
+
     if (Object.keys(errors).length === 0) {
       const formData = {
         modifiedby,
-        status: selectedStatus,
-        assignedto: employee,
-
-
+        status: updatedStatus,
+        assignedTo: updatedEmployee,
+        id: ticketId
       };
 
-
-
-      console.log("test1", formData);
       axios
-        .put(
-          `${process.env.REACT_APP_API_URL}/api/ticket/assignTicket`,
-          formData
-        )
+        .put(`${process.env.REACT_APP_API_URL}/api/ticket/assignTicket`, formData)
         .then((response) => {
           console.log("Response:", response.data);
           toast.success("Ticket Assigned successfully", {
             autoClose: 2000,
-            theme: "colored",
+            theme: "colored"
           });
         })
         .catch((error) => {
@@ -313,6 +297,7 @@ export default function AllTickets() {
           ></Box>
         )}
       />
+      <ToastContainer />
     </div>
   );
 }
