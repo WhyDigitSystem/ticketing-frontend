@@ -47,7 +47,7 @@ export default function AllTickets() {
   const [status, setStatus] = useState("");
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
-  const [assignedto, setAssignedTo] = useState({});
+  const [assignedTo, setAssignedTo] = useState({});
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -90,10 +90,15 @@ export default function AllTickets() {
       if (response.status === 200) {
         setData(response.data.paramObjectsMap.ticketVO.reverse());
         const initialStatus = {};
+        const initialAssignTo = {};
         response.data.paramObjectsMap.ticketVO.forEach((ticket) => {
           initialStatus[ticket.id] = ticket.status || "";
+          initialAssignTo[ticket.id] = ticket.assignedTo || "";
         });
         setSelectedStatus(initialStatus);
+        setAssignedTo(initialAssignTo);
+
+
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -120,7 +125,7 @@ export default function AllTickets() {
       {
         accessorKey: "actions",
         header: "Actions",
-        size: 50,
+        size: 80,
         muiTableHeadCellProps: {
           align: "center"
         },
@@ -141,7 +146,7 @@ export default function AllTickets() {
       {
         accessorKey: "id",
         header: "Ticket Id",
-        size: 70,
+        size: 90,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -152,7 +157,7 @@ export default function AllTickets() {
       {
         accessorKey: "docDate",
         header: "Date",
-        size: 70,
+        size: 90,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -163,7 +168,7 @@ export default function AllTickets() {
       {
         accessorKey: "status",
         header: "Status",
-        size: 70,
+        size: 90,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -187,7 +192,7 @@ export default function AllTickets() {
       {
         accessorKey: "assignto",
         header: "Assign To",
-        size: 70,
+        size: 100,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -196,13 +201,13 @@ export default function AllTickets() {
         },
         Cell: ({ row }) => (
           <Select
-            value={employee[row.original.id] || ""}
+            value={assignedTo[row.original.id] || ""}
             onChange={(e) => handleEmployeeChange(e, row.original.id)}
             sx={{ minWidth: 120 }}
           >
-            <MenuItem value="" disabled>
+            {/* <MenuItem value="" disabled>
               Assign To
-            </MenuItem>
+            </MenuItem> */}
             {employeedata.map((employeedata) => (
               <MenuItem key={employeedata.employee} value={employeedata.employee}>
                 {employeedata.employee}
@@ -214,7 +219,7 @@ export default function AllTickets() {
       {
         accessorKey: "title",
         header: "Title",
-        size: 70,
+        size: 90,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -225,7 +230,7 @@ export default function AllTickets() {
       {
         accessorKey: "priority",
         header: "Priority",
-        size: 70,
+        size: 90,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -234,7 +239,7 @@ export default function AllTickets() {
         }
       }
     ],
-    [selectedStatus, employee, employeedata]
+    [selectedStatus, employee, employeedata, assignedTo]
   );
 
   const UpdateTicket = (row) => {
@@ -273,31 +278,41 @@ export default function AllTickets() {
   };
 
   return (
-    <div className="mt-4">
-      <MaterialReactTable
-        displayColumnDefOptions={{
-          "mrt-row-actions": {
-            muiTableHeadCellProps: {
-              align: "left"
-            },
-            size: 100
-          }
-        }}
-        columns={columns}
-        data={data}
-        editingMode="modal"
-        enableColumnOrdering
-        renderRowActions={({ row, table }) => (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "1rem",
-              justifyContent: "flex-end"
+
+    <div
+      className="pt-8 card p-3 bg-base-100 shadow-xl mt-2"
+      style={{ width: "100%", margin: "auto" }}
+    >
+      <div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
+        <div className="mt-4">
+          <MaterialReactTable
+            displayColumnDefOptions={{
+              "mrt-row-actions": {
+                muiTableHeadCellProps: {
+                  align: "left"
+                },
+                size: 100
+              }
             }}
-          ></Box>
-        )}
-      />
-      <ToastContainer />
+            columns={columns}
+            data={data}
+            editingMode="modal"
+            enableColumnOrdering
+            renderRowActions={({ row, table }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "1rem",
+                  justifyContent: "flex-end"
+                }}
+              ></Box>
+            )}
+          />
+
+
+          <ToastContainer />
+        </div>
+      </div>
     </div>
   );
 }

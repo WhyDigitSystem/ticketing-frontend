@@ -140,118 +140,121 @@ const Ticket = () => {
       <div>
         <ToastContainer />
       </div>
-      <h7 class="ticketheader">New Ticket</h7>
+
+      <div className="card w-full p-8 bg-base-100 shadow-x2">
+        <div className="grid lg:grid-cols-4 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
+          <h7 class="ticketheader">New Ticket</h7>
 
 
 
-      <div className="card w-full p-6 bg-base-100 shadow-xl" style={{ padding: "20px" }}>
-        <div className="row d-flex mt-3 ml">
-          <div
-            className="d-flex flex-wrap justify-content-start mb-4"
-            style={{ marginBottom: "20px" }}
-          >
-            <Tooltip title="Search" placement="top">
-              <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <SearchIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
-            </Tooltip>
+          <div className="card w-full p-6 bg-base-100 shadow-xl" style={{ padding: "20px" }}>
+            <div className="row d-flex mt-3 ml">
+              <div
+                className="d-flex flex-wrap justify-content-start mb-4"
+                style={{ marginBottom: "20px" }}
+              >
+                <Tooltip title="Search" placement="top">
+                  <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        transition: "all .2s ease-in-out",
+                        background: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                        '&[aria-controls="menu-list-grow"],&:hover': {
+                          background: theme.palette.primary.dark,
+                          color: theme.palette.primary.light
+                        }
+                      }}
+                      ref={anchorRef}
+                      aria-haspopup="true"
+                      color="inherit"
+                    >
+                      <SearchIcon size="1.3rem" stroke={1.5} />
+                    </Avatar>
+                  </ButtonBase>
+                </Tooltip>
 
-            <Tooltip title="Clear" placement="top">
-              {" "}
-              <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleClear}
-                >
-                  <ClearIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
-            </Tooltip>
+                <Tooltip title="Clear" placement="top">
+                  {" "}
+                  <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        transition: "all .2s ease-in-out",
+                        background: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                        '&[aria-controls="menu-list-grow"],&:hover': {
+                          background: theme.palette.primary.dark,
+                          color: theme.palette.primary.light
+                        }
+                      }}
+                      ref={anchorRef}
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={handleClear}
+                    >
+                      <ClearIcon size="1.3rem" stroke={1.5} />
+                    </Avatar>
+                  </ButtonBase>
+                </Tooltip>
 
-            <Tooltip title="List View" placement="top">
-              {" "}
-              <ButtonBase sx={{ borderRadius: "12px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
-            </Tooltip>
-            <Tooltip title="Save" placement="top">
-              {" "}
-              <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleTicket}
-                >
-                  <SaveIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
-            </Tooltip>
-          </div>
+                <Tooltip title="List View" placement="top">
+                  {" "}
+                  <ButtonBase sx={{ borderRadius: "12px" }}>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        transition: "all .2s ease-in-out",
+                        background: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                        '&[aria-controls="menu-list-grow"],&:hover': {
+                          background: theme.palette.primary.dark,
+                          color: theme.palette.primary.light
+                        }
+                      }}
+                      ref={anchorRef}
+                      aria-haspopup="true"
+                      color="inherit"
+                    >
+                      <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} />
+                    </Avatar>
+                  </ButtonBase>
+                </Tooltip>
+                <Tooltip title="Save" placement="top">
+                  {" "}
+                  <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        transition: "all .2s ease-in-out",
+                        background: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                        '&[aria-controls="menu-list-grow"],&:hover': {
+                          background: theme.palette.primary.dark,
+                          color: theme.palette.primary.light
+                        }
+                      }}
+                      ref={anchorRef}
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={handleTicket}
+                    >
+                      <SaveIcon size="1.3rem" stroke={1.5} />
+                    </Avatar>
+                  </ButtonBase>
+                </Tooltip>
+              </div>
 
-          {/* <div className="col-md-3 mb-2">
+              {/* <div className="col-md-3 mb-2">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DemoContainer components={['DatePicker']}>
                 <DatePicker
@@ -269,160 +272,162 @@ const Ticket = () => {
             </LocalizationProvider>
           </div> */}
 
-          <div className="col-md-4 mb-3">
-            <TextField
-              id="outlined-textarea"
-              onChange={handleInputChange}
-              label="Title"
-              name="title"
-              value={title}
-              placeholder=""
-              multiline
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
+              <div className="col-md-4 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  onChange={handleInputChange}
+                  label="Title"
+                  name="title"
+                  value={title}
+                  placeholder=""
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
 
 
-          {<div className="col-md-2 mb-3">
-            <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="priority"
-                onChange={handleInputChange}
-                value={priority}
-                placeholder=""
-                // value={age}
-                label="Priority"
-              // onChange={handleChange}
-              >
-                <MenuItem value="High">High</MenuItem>
-                <MenuItem value="Medium">Medium</MenuItem>
-                <MenuItem value="Normal">Normal</MenuItem>
-              </Select>
-            </FormControl>
-          </div>}
+              {<div className="col-md-2 mb-3">
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="priority"
+                    onChange={handleInputChange}
+                    value={priority}
+                    placeholder=""
+                    // value={age}
+                    label="Priority"
+                  // onChange={handleChange}
+                  >
+                    <MenuItem value="High">High</MenuItem>
+                    <MenuItem value="Medium">Medium</MenuItem>
+                    <MenuItem value="Normal">Normal</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>}
 
-          <div className="col-md-12 mb-3">
-            <TextArea
-              rows={4}
-              cols={40}
-              id="Old Rate"
-              name="description"
-              onChange={handleInputChange}
-              label="Description"
-              value={description}
-              placeholder=""
-              multiline
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
+              <div className="col-md-12 mb-3">
+                <TextArea
+                  rows={4}
+                  cols={40}
+                  id="Old Rate"
+                  name="description"
+                  onChange={handleInputChange}
+                  label="Description"
+                  value={description}
+                  placeholder=""
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
 
-          <div className="col-md-4 mb-3" >
-            <input
-              type="file"
-              id="file-input"
-              onChange={handleInputChange}
-              multiple
-              style={{ display: "none" }}
-            // onChange={(e) => handleFileUpload(e.target.files)}
-            />
-            <label htmlFor="file-input">
-              <Button
-                variant="contained"
-                component="span"
-              // startIcon={<FaCloudUploadAlt />}
-              >
-                Upload file
-              </Button>
-            </label>
-          </div>
-
-
-
+              <div className="col-md-4 mb-3" >
+                <input
+                  type="file"
+                  id="file-input"
+                  onChange={handleInputChange}
+                  multiple
+                  style={{ display: "none" }}
+                // onChange={(e) => handleFileUpload(e.target.files)}
+                />
+                <label htmlFor="file-input">
+                  <Button
+                    variant="contained"
+                    component="span"
+                  // startIcon={<FaCloudUploadAlt />}
+                  >
+                    Upload file
+                  </Button>
+                </label>
+              </div>
 
 
 
-          <div className="col-md-2 mb-3">
-            <TextField
-              id="outlined-textarea"
-              label="Status"
-              name="status"
-              onChange={handleInputChange}
-              placeholder="Placeholder"
-              multiline
-              hidden
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
 
-          <div className="col-md-2 mb-3">
-            <TextField
-              id="outlined-textarea"
-              label="Assigned To"
-              name="assignedto"
-              onChange={handleInputChange}
-              placeholder="Placeholder"
-              multiline
-              hidden
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
 
-          <div className="col-md-2 mb-3">
-            <TextField
-              id="outlined-textarea"
-              label="Completed On"
-              name="completedon"
-              placeholder="Placeholder"
-              onChange={handleInputChange}
-              multiline
-              hidden
-              variant="outlined"
-              type="Date"
-              size="small"
-              fullWidth
-            />
-          </div>
 
-          <div className="col-md-2 mb-3">
-            <TextField
-              id="outlined-textarea"
-              label="Completed By"
-              name="completedby"
-              onChange={handleInputChange}
-              placeholder="Placeholder"
-              hidden
-              multiline
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </div>
+              <div className="col-md-2 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Status"
+                  name="status"
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  multiline
+                  hidden
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
 
-          <div className="col-md-2 mb-2">
-            <TextField
-              id="outlined-textarea"
-              onChange={handleInputChange}
-              label="Ticket Id"
-              name="docid"
-              disabled
-              hidden
-              placeholder="Placeholder"
-              multiline
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
+              <div className="col-md-2 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Assigned To"
+                  name="assignedto"
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  multiline
+                  hidden
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+
+              <div className="col-md-2 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Completed On"
+                  name="completedon"
+                  placeholder="Placeholder"
+                  onChange={handleInputChange}
+                  multiline
+                  hidden
+                  variant="outlined"
+                  type="Date"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+
+              <div className="col-md-2 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Completed By"
+                  name="completedby"
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  hidden
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+
+              <div className="col-md-2 mb-2">
+                <TextField
+                  id="outlined-textarea"
+                  onChange={handleInputChange}
+                  label="Ticket Id"
+                  name="docid"
+                  disabled
+                  hidden
+                  placeholder="Placeholder"
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
