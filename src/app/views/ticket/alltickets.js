@@ -3,8 +3,18 @@ import { useEffect, useMemo, useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import { MaterialReactTable } from "material-react-table";
+import { useRef } from "react";
+import { Avatar, ButtonBase } from "@mui/material";
+
+import SaveIcon from "@mui/icons-material/Save";
 
 import { ToastContainer, toast } from "react-toastify";
+
+import { useTheme } from "@mui/material/styles";
+
+import TitleCard from "./TitleCard";
+
+import './ticket.css';
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -48,6 +58,9 @@ export default function AllTickets() {
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
   const [assignedTo, setAssignedTo] = useState({});
+
+  const theme = useTheme();
+  const anchorRef = useRef(null);
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -127,26 +140,53 @@ export default function AllTickets() {
         header: "Actions",
         size: 80,
         muiTableHeadCellProps: {
-          align: "center"
+          align: "left"
         },
         muiTableBodyCellProps: {
-          align: "center"
+          align: "left"
         },
         enableSorting: false,
         enableColumnOrdering: false,
         enableEditing: false,
         Cell: ({ row }) => (
+          // <div>
+          //   <IconButton onClick={() => UpdateTicket(row)}>
+          //     <EditIcon />
+          //   </IconButton>
+          // </div>
+
           <div>
-            <IconButton onClick={() => UpdateTicket(row)}>
-              <EditIcon />
-            </IconButton>
+            {" "}
+            <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
+              <Avatar
+                variant="rounded"
+                sx={{
+                  ...theme.typography.commonAvatar,
+                  ...theme.typography.mediumAvatar,
+                  transition: "all .2s ease-in-out",
+                  background: theme.palette.primary.light,
+                  color: theme.palette.primary.dark,
+                  '&[aria-controls="menu-list-grow"],&:hover': {
+                    background: theme.palette.primary.dark,
+                    color: theme.palette.primary.light
+                  }
+                }}
+                ref={anchorRef}
+                aria-haspopup="true"
+                color="inherit"
+                onClick={() => UpdateTicket(row)}
+              >
+                <SaveIcon size="1.3rem" stroke={1.5} />
+              </Avatar>
+            </ButtonBase>
           </div>
+
         )
       },
       {
         accessorKey: "id",
-        header: "Ticket Id",
-        size: 90,
+        header: "TicketNo",
+        size: 120,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -168,7 +208,7 @@ export default function AllTickets() {
       {
         accessorKey: "status",
         header: "Status",
-        size: 90,
+        size: 120,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -176,6 +216,7 @@ export default function AllTickets() {
           align: "left"
         },
         Cell: ({ row }) => (
+
           <Select
             value={selectedStatus[row.original.id] || ""}
             onChange={(e) => handleStatusChange(e, row.original.id)}
@@ -187,12 +228,14 @@ export default function AllTickets() {
               </MenuItem>
             ))}
           </Select>
+
+
         )
       },
       {
         accessorKey: "assignto",
         header: "Assign To",
-        size: 100,
+        size: 120,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -230,7 +273,7 @@ export default function AllTickets() {
       {
         accessorKey: "priority",
         header: "Priority",
-        size: 90,
+        size: 120,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -279,12 +322,110 @@ export default function AllTickets() {
 
   return (
 
-    <div
-      className="pt-8 card p-3 bg-base-100 shadow-xl mt-2"
-      style={{ width: "100%", margin: "auto" }}
-    >
+
+    <div className="customized-container backgroundclr">
+
+      <h3 className="text-2xl font-semibold mt-4">Tickets</h3>
       <div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-4">
+
+          {/* <table className="table table-hover w-full">
+            <thead>
+              <tr>
+                <th
+                  className="text-black border px-2 text-center"
+                  style={{
+                    paddingTop: "1%",
+                    paddingBottom: "1%",
+                    width: "13%",
+                  }}
+                >
+                  DocId
+                </th>
+                <th className="px-2 text-black border text-center">
+                  DocDate
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Allotment No
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Allotment Date
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Flow
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Kit No
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Req Qty
+                </th>
+                <th className="px-2 text-black border text-center">
+                  Alloted QTY
+                </th>
+                {/* <th className="px-2 py-2 bg-blue-500 text-white">
+                 Return Qty
+               </th> */}
+          {/* </tr> */}
+          {/* </thead> */}
+          {/* <tbody>
+                    {paginatedData &&
+                      paginatedData.map((row) => (
+                        <tr key={row.id}>
+                          <td className="border px-2 py-2 text-center">
+                            <span
+                              onClick={() => {
+                                console.log("Row Data:", row);
+                                handleOpenDialog(row.docid);
+                              }}
+                              style={{
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                width: "100%",
+                                color: "blue",
+                              }}
+                            >
+                            </span>
+                          </td>
+                          <td className="border px-2 py-2 text-center">
+                          </td>
+
+                          <td className="border px-2 py-2 text-center">
+                          </td>
+
+                          <td className="border px-2 py-2 text-center">
+                          </td>
+                          <td className="border px-2 py-2 text-center">
+                            {row.flow}
+                          </td>
+                          <td className="border px-2 py-2 text-center text-center">
+                            <span
+                              onClick={() => {
+                                console.log("Row Data:", row);
+                                handleOpenDialogNew(
+                                  row.kitCode,
+                                  row.allotedQty
+                                );
+                              }}
+                              style={{
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                width: "100%",
+                                color: "blue",
+                              }}
+                            >
+                            </span>
+                          </td>
+                          <td className="border px-2 py-2 text-center">
+                          </td>
+                          
+                        </tr>
+                      ))}
+                  </tbody> */}
+          {/* </table> */}
+
+
+
           <MaterialReactTable
             displayColumnDefOptions={{
               "mrt-row-actions": {
@@ -297,7 +438,7 @@ export default function AllTickets() {
             columns={columns}
             data={data}
             editingMode="modal"
-            enableColumnOrdering
+            // enableColumnOrdering
             renderRowActions={({ row, table }) => (
               <Box
                 sx={{
@@ -313,6 +454,10 @@ export default function AllTickets() {
           <ToastContainer />
         </div>
       </div>
+      {/* </div> */}
     </div>
+
+
+
   );
 }

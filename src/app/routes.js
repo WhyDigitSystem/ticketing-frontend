@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
-
+import "./style.css"
 import AuthGuard from "./auth/AuthGuard";
 import { authRoles } from "./auth/authRoles";
 

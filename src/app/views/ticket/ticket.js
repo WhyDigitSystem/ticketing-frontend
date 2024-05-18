@@ -5,7 +5,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import TextArea from "@mui/material/TextField"
-import { useTheme } from "@mui/material/styles";
+import { useTheme, styled } from "@mui/material/styles";
+// import { Card, Grid, , useTheme } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 // import { AiOutlineSearch, AiOutlineWallet } from 'react-icons/ai';
 // import { BsListTask } from 'react-icons/bs';
@@ -34,7 +35,10 @@ import Button from "@mui/material/Button";
 import { date } from "yup";
 // import { FaArrowCircleLeft, FaCloudUploadAlt } from "react-icons/fa";
 // import "react-tabs/style/react-tabs.css";
-
+const ContentBox = styled("div")(({ theme }) => ({
+  margin: "30px 100px 30px 100px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" }
+}));
 const Ticket = () => {
   //   const buttonStyle = {
   //     fontSize: '20px' // Adjust the font size as needed save
@@ -141,13 +145,14 @@ const Ticket = () => {
         <ToastContainer />
       </div>
 
-      <div className="card w-full p-8 bg-base-100 shadow-x2">
-        <div className="grid lg:grid-cols-4 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
+
+      <div className="customized-container backgroundclr">
+        <div className="card w-full p-3 bg-base-100 shadow-lg">
           <h7 class="ticketheader">New Ticket</h7>
 
 
 
-          <div className="card w-full p-6 bg-base-100 shadow-xl" style={{ padding: "20px" }}>
+          <div className="" style={{ padding: "20px" }}>
             <div className="row d-flex mt-3 ml">
               <div
                 className="d-flex flex-wrap justify-content-start mb-4"

@@ -11,3 +11,33 @@
   text-shadow: 2px 1px 1px #000;
   filter: saturate(150%) drop-shadow(0 0 1rem gray);
 }
+
+
+.custom-select {
+  background: #ffffff url(http://www.techandmath.gr/img/icons/small_down_arrow.gif) no-repeat 92% 50%;
+  border:1px solid #cccccc;
+  float:left;
+  padding:10px 0;
+  overflow: hidden;
+  width:260px;
+}
+
+.custom-select select {
+  -webkit-appearance: none;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  background-image: none;
+  font-family:Georgia;
+  font-size:14px;
+  font-style:italic;
+  font-weight:normal;
+  padding:0 0 0 20px;
+  padding-bottom:12px\9;
+  vertical-align:middle;
+  width: 130%;
+}
+
+.custom-select select:focus {
+  outline: none;
+}

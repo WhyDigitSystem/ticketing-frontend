@@ -1,6 +1,6 @@
 import { useRoutes } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-
+import "./App.css"
 import { MatxTheme } from "./components";
 // ALL CONTEXTS
 import { AuthProvider } from "./contexts/JWTAuthContext";
