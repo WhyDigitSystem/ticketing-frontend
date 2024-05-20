@@ -1,24 +1,17 @@
-import {
-  Box,
-  MenuItem,
-  Select,
-  Table,
-  styled,
-  Avatar,
-  ButtonBase
-} from "@mui/material";
-import { useEffect, useMemo, useState, useRef } from "react";
 import SaveIcon from "@mui/icons-material/Save";
-import { MaterialReactTable } from "material-react-table";
-import { ToastContainer, toast } from "react-toastify";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Avatar, Box, ButtonBase, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 import dayjs from "dayjs";
-import "react-toastify/dist/ReactToastify.css";
-import { IoMdClose } from "react-icons/io";
-import Ticket from "./ticket";
-import { Link } from "react-router-dom";
+import { MaterialReactTable } from "material-react-table";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ImageModal from "./ImageModal";
 
 // STYLED COMPONENT
 const StyledTable = styled(Table)(() => ({
@@ -57,6 +50,8 @@ export default function AllTickets({ view, listView }) {
   const [assignedTo, setAssignedTo] = useState({});
   const theme = useTheme();
   const anchorRef = useRef(null);
+  const [openImageModal, setOpenImageModal] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -96,9 +91,7 @@ export default function AllTickets({ view, listView }) {
 
   const getTicketData = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`);
 
       if (response.status === 200) {
         console.log("Ticket Data:", response.data.paramObjectsMap.ticketVO);
@@ -135,12 +128,48 @@ export default function AllTickets({ view, listView }) {
     setEdit(true);
   };
 
+  const fetchImage = async (ticketId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/${ticketId}`);
+
+      if (response.status === 200) {
+        // Assuming `imageData` is a base64-encoded string, convert it to Blob
+        const imageData = response.data.paramObjectsMap.ticketVO.imageData;
+        const blob = await fetchImageDataAsBlob(imageData);
+
+        if (blob) {
+          const imageUrl = URL.createObjectURL(blob);
+          setSelectedImageUrl(imageUrl);
+          setOpenImageModal(true);
+        } else {
+          console.error("Failed to fetch image data or convert to Blob.");
+        }
+      } else {
+        console.error("Failed to fetch image. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching the image:", error);
+    }
+  };
+
+  const fetchImageDataAsBlob = async (imageData) => {
+    try {
+      // Assuming imageData is base64 encoded
+      const response = await fetch(`data:image/jpeg;base64,${imageData}`);
+      const blob = await response.blob();
+      return blob;
+    } catch (error) {
+      console.error("Error converting image data to Blob:", error);
+      return null;
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
         accessorKey: "actions",
         header: "Actions",
-        size: 80,
+        size: 120,
         muiTableHeadCellProps: {
           align: "left"
         },
@@ -172,6 +201,28 @@ export default function AllTickets({ view, listView }) {
                 onClick={() => UpdateTicket(row)}
               >
                 <SaveIcon size="1.3rem" stroke={1.5} />
+              </Avatar>
+            </ButtonBase>
+            <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
+              <Avatar
+                variant="rounded"
+                sx={{
+                  ...theme.typography.commonAvatar,
+                  ...theme.typography.mediumAvatar,
+                  transition: "all .2s ease-in-out",
+                  background: theme.palette.primary.light,
+                  color: theme.palette.primary.dark,
+                  '&[aria-controls="menu-list-grow"],&:hover': {
+                    background: theme.palette.primary.dark,
+                    color: theme.palette.primary.light
+                  }
+                }}
+                ref={anchorRef}
+                aria-haspopup="true"
+                color="inherit"
+                onClick={() => fetchImage(row.original.id)} // Add onClick to fetchImage function
+              >
+                <VisibilityIcon size="1.3rem" stroke={1.5} />
               </Avatar>
             </ButtonBase>
           </div>
@@ -311,7 +362,6 @@ export default function AllTickets({ view, listView }) {
     // <div className="customized-container backgroundclr">
     <div className="card shadow-lg customized-container backgroundclr">
       <div className="flex justify-between mt-1 mb-1">
-
         <h7 class="ticketheader">Tickets</h7>
       </div>
       {/* <h3 className="text-2xl font-semibold mt-4">Tickets</h3> */}
@@ -319,32 +369,39 @@ export default function AllTickets({ view, listView }) {
 
       {listView ? (
         <>
-          <div className="d-flex flex-wrap content-end mb-4" style={{
-            position: 'absolute',
-            left: 900,
-            top: 30
-          }}>
-
-            <button >
+          <div
+            className="d-flex flex-wrap content-end mb-4"
+            style={{
+              position: "absolute",
+              left: 900,
+              top: 30
+            }}
+          >
+            <button>
               <IoMdClose
                 // style={{ }}
-                onClick={() => { view(false) }}
+                onClick={() => {
+                  view(false);
+                }}
               />
             </button>
           </div>
         </>
-      ) : (<div className="d-flex flex-row"  >
-        <Link to="/dashboard/default">
-
-          <FaArrowCircleLeft className="cursor-pointer w-8 h-8" style={{
-            position: 'absolute',
-            left: 900,
-            fontSize: "30px"
-          }} />
-        </Link>
-      </div>)
-      }
-      < div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
+      ) : (
+        <div className="d-flex flex-row">
+          <Link to="/dashboard/default">
+            <FaArrowCircleLeft
+              className="cursor-pointer w-8 h-8"
+              style={{
+                position: "absolute",
+                left: 900,
+                fontSize: "30px"
+              }}
+            />
+          </Link>
+        </div>
+      )}
+      <div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-4">
           <MaterialReactTable
             displayColumnDefOptions={{
@@ -371,6 +428,11 @@ export default function AllTickets({ view, listView }) {
           <ToastContainer />
         </div>
       </div>
-    </div >
+      <ImageModal
+        open={openImageModal}
+        imageUrl={selectedImageUrl}
+        onClose={() => setOpenImageModal(false)}
+      />
+    </div>
   );
 }
