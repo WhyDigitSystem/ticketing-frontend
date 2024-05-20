@@ -1,24 +1,24 @@
-import { Box, IconButton, MenuItem, Select, Table, styled } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-
-import EditIcon from "@mui/icons-material/Edit";
-import { MaterialReactTable } from "material-react-table";
-import { useRef } from "react";
-import { Avatar, ButtonBase } from "@mui/material";
-
+import {
+  Box,
+  MenuItem,
+  Select,
+  Table,
+  styled,
+  Avatar,
+  ButtonBase
+} from "@mui/material";
+import { useEffect, useMemo, useState, useRef } from "react";
 import SaveIcon from "@mui/icons-material/Save";
-
+import { MaterialReactTable } from "material-react-table";
 import { ToastContainer, toast } from "react-toastify";
-
 import { useTheme } from "@mui/material/styles";
-
-import TitleCard from "./TitleCard";
-
-import './ticket.css';
-
 import axios from "axios";
 import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
+import { IoMdClose } from "react-icons/io";
+import Ticket from "./ticket";
+import { Link } from "react-router-dom";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 // STYLED COMPONENT
 const StyledTable = styled(Table)(() => ({
@@ -35,19 +35,16 @@ const StyledTable = styled(Table)(() => ({
   }
 }));
 
-export default function AllTickets() {
+export default function AllTickets({ view, listView }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState([]);
-
   const [employeedata, setEmployeeData] = useState([]);
   const [statusOptions] = useState(["Assigned", "Rejected"]);
   const [selectedStatus, setSelectedStatus] = useState({});
   const [edit, setEdit] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
-
   const [employee, setEmployee] = useState({});
-
   const [createdby, setCreatedBy] = useState("admin");
   const [modifiedby, setModifiedBy] = useState("admin");
   const [client, setClient] = useState("Casio");
@@ -58,7 +55,6 @@ export default function AllTickets() {
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
   const [assignedTo, setAssignedTo] = useState({});
-
   const theme = useTheme();
   const anchorRef = useRef(null);
 
@@ -83,6 +79,7 @@ export default function AllTickets() {
       );
 
       if (response.status === 200) {
+        console.log("Employee Data:", response.data.paramObjectsMap.employeeVO);
         setEmployeeData(response.data.paramObjectsMap.employeeVO.reverse());
 
         const initialEmployee = {};
@@ -90,17 +87,21 @@ export default function AllTickets() {
           initialEmployee[ticket.id] = ticket.employee || "";
         });
         setEmployee(initialEmployee);
+        console.log("Initial Employee State:", initialEmployee);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching employee data:", error);
     }
   };
 
   const getTicketData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`
+      );
 
       if (response.status === 200) {
+        console.log("Ticket Data:", response.data.paramObjectsMap.ticketVO);
         setData(response.data.paramObjectsMap.ticketVO.reverse());
         const initialStatus = {};
         const initialAssignTo = {};
@@ -110,11 +111,11 @@ export default function AllTickets() {
         });
         setSelectedStatus(initialStatus);
         setAssignedTo(initialAssignTo);
-
-
+        console.log("Initial Status State:", initialStatus);
+        console.log("Initial AssignedTo State:", initialAssignTo);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching ticket data:", error);
     }
   };
 
@@ -124,8 +125,9 @@ export default function AllTickets() {
   };
 
   const handleEmployeeChange = (e, ticketId) => {
-    const newEmployee = { ...employee, [ticketId]: e.target.value };
-    setEmployee(newEmployee);
+    const newEmployee = { ...assignedTo, [ticketId]: e.target.value };
+    setAssignedTo(newEmployee);
+    console.log("Updated AssignedTo State:", newEmployee);
   };
 
   const handleEditRow = (row) => {
@@ -149,14 +151,7 @@ export default function AllTickets() {
         enableColumnOrdering: false,
         enableEditing: false,
         Cell: ({ row }) => (
-          // <div>
-          //   <IconButton onClick={() => UpdateTicket(row)}>
-          //     <EditIcon />
-          //   </IconButton>
-          // </div>
-
           <div>
-            {" "}
             <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
               <Avatar
                 variant="rounded"
@@ -180,7 +175,6 @@ export default function AllTickets() {
               </Avatar>
             </ButtonBase>
           </div>
-
         )
       },
       {
@@ -216,7 +210,6 @@ export default function AllTickets() {
           align: "left"
         },
         Cell: ({ row }) => (
-
           <Select
             value={selectedStatus[row.original.id] || ""}
             onChange={(e) => handleStatusChange(e, row.original.id)}
@@ -228,12 +221,10 @@ export default function AllTickets() {
               </MenuItem>
             ))}
           </Select>
-
-
         )
       },
       {
-        accessorKey: "assignto",
+        accessorKey: "assignedTo",
         header: "Assign To",
         size: 120,
         muiTableHeadCellProps: {
@@ -248,12 +239,9 @@ export default function AllTickets() {
             onChange={(e) => handleEmployeeChange(e, row.original.id)}
             sx={{ minWidth: 120 }}
           >
-            {/* <MenuItem value="" disabled>
-              Assign To
-            </MenuItem> */}
-            {employeedata.map((employeedata) => (
-              <MenuItem key={employeedata.employee} value={employeedata.employee}>
-                {employeedata.employee}
+            {employeedata.map((employee) => (
+              <MenuItem key={employee.id} value={employee.employee}>
+                {employee.employee}
               </MenuItem>
             ))}
           </Select>
@@ -282,17 +270,17 @@ export default function AllTickets() {
         }
       }
     ],
-    [selectedStatus, employee, employeedata, assignedTo]
+    [selectedStatus, assignedTo, employeedata]
   );
 
   const UpdateTicket = (row) => {
     const ticketId = row.original.id;
     const updatedStatus = selectedStatus[ticketId];
-    const updatedEmployee = employee[ticketId];
+    const updatedEmployee = assignedTo[ticketId];
 
     const errors = {};
     if (!updatedStatus) errors.status = "Status is required";
-    if (!updatedEmployee) errors.assignedto = "Assigned To is required";
+    if (!updatedEmployee) errors.assignedTo = "Assigned To is required";
 
     if (Object.keys(errors).length === 0) {
       const formData = {
@@ -315,117 +303,49 @@ export default function AllTickets() {
           console.error("Error:", error);
         });
     } else {
-      // If there are errors, update the state to display them
       setErrors(errors);
     }
   };
 
   return (
+    // <div className="customized-container backgroundclr">
+    <div className="card shadow-lg customized-container backgroundclr">
+      <div className="flex justify-between mt-1 mb-1">
 
+        <h7 class="ticketheader">Tickets</h7>
+      </div>
+      {/* <h3 className="text-2xl font-semibold mt-4">Tickets</h3> */}
+      {/* <div className="justify-content-end mt-4"> */}
 
-    <div className="customized-container backgroundclr">
+      {listView ? (
+        <>
+          <div className="d-flex flex-wrap content-end mb-4" style={{
+            position: 'absolute',
+            left: 900,
+            top: 30
+          }}>
 
-      <h3 className="text-2xl font-semibold mt-4">Tickets</h3>
-      <div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
+            <button >
+              <IoMdClose
+                // style={{ }}
+                onClick={() => { view(false) }}
+              />
+            </button>
+          </div>
+        </>
+      ) : (<div className="d-flex flex-row"  >
+        <Link to="/dashboard/default">
+
+          <FaArrowCircleLeft className="cursor-pointer w-8 h-8" style={{
+            position: 'absolute',
+            left: 900,
+            fontSize: "30px"
+          }} />
+        </Link>
+      </div>)
+      }
+      < div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-4">
-
-          {/* <table className="table table-hover w-full">
-            <thead>
-              <tr>
-                <th
-                  className="text-black border px-2 text-center"
-                  style={{
-                    paddingTop: "1%",
-                    paddingBottom: "1%",
-                    width: "13%",
-                  }}
-                >
-                  DocId
-                </th>
-                <th className="px-2 text-black border text-center">
-                  DocDate
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Allotment No
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Allotment Date
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Flow
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Kit No
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Req Qty
-                </th>
-                <th className="px-2 text-black border text-center">
-                  Alloted QTY
-                </th>
-                {/* <th className="px-2 py-2 bg-blue-500 text-white">
-                 Return Qty
-               </th> */}
-          {/* </tr> */}
-          {/* </thead> */}
-          {/* <tbody>
-                    {paginatedData &&
-                      paginatedData.map((row) => (
-                        <tr key={row.id}>
-                          <td className="border px-2 py-2 text-center">
-                            <span
-                              onClick={() => {
-                                console.log("Row Data:", row);
-                                handleOpenDialog(row.docid);
-                              }}
-                              style={{
-                                textDecoration: "underline",
-                                cursor: "pointer",
-                                width: "100%",
-                                color: "blue",
-                              }}
-                            >
-                            </span>
-                          </td>
-                          <td className="border px-2 py-2 text-center">
-                          </td>
-
-                          <td className="border px-2 py-2 text-center">
-                          </td>
-
-                          <td className="border px-2 py-2 text-center">
-                          </td>
-                          <td className="border px-2 py-2 text-center">
-                            {row.flow}
-                          </td>
-                          <td className="border px-2 py-2 text-center text-center">
-                            <span
-                              onClick={() => {
-                                console.log("Row Data:", row);
-                                handleOpenDialogNew(
-                                  row.kitCode,
-                                  row.allotedQty
-                                );
-                              }}
-                              style={{
-                                textDecoration: "underline",
-                                cursor: "pointer",
-                                width: "100%",
-                                color: "blue",
-                              }}
-                            >
-                            </span>
-                          </td>
-                          <td className="border px-2 py-2 text-center">
-                          </td>
-                          
-                        </tr>
-                      ))}
-                  </tbody> */}
-          {/* </table> */}
-
-
-
           <MaterialReactTable
             displayColumnDefOptions={{
               "mrt-row-actions": {
@@ -438,7 +358,6 @@ export default function AllTickets() {
             columns={columns}
             data={data}
             editingMode="modal"
-            // enableColumnOrdering
             renderRowActions={({ row, table }) => (
               <Box
                 sx={{
@@ -449,15 +368,9 @@ export default function AllTickets() {
               ></Box>
             )}
           />
-
-
           <ToastContainer />
         </div>
       </div>
-      {/* </div> */}
-    </div>
-
-
-
+    </div >
   );
 }

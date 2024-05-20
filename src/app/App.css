@@ -5,3 +5,7 @@
 .customized-container{
     margin: 30px 100px 30px 100px;
 }
+
+.mouse-cursor {
+    cursor: pointer;
+}

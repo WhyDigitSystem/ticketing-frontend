@@ -8,6 +8,7 @@ import TextArea from "@mui/material/TextField"
 import { useTheme, styled } from "@mui/material/styles";
 // import { Card, Grid, , useTheme } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
+import { FaArrowCircleLeft } from "react-icons/fa";
 // import { AiOutlineSearch, AiOutlineWallet } from 'react-icons/ai';
 // import { BsListTask } from 'react-icons/bs';
 import ClearIcon from "@mui/icons-material/Clear";
@@ -19,7 +20,9 @@ import { useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { IoMdClose } from "react-icons/io";
 
+import { Link } from "react-router-dom";
 
 import './ticket.css';
 
@@ -33,12 +36,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import Button from "@mui/material/Button";
 import { date } from "yup";
+import AllTickets from "./alltickets";
 // import { FaArrowCircleLeft, FaCloudUploadAlt } from "react-icons/fa";
 // import "react-tabs/style/react-tabs.css";
-const ContentBox = styled("div")(({ theme }) => ({
-  margin: "30px 100px 30px 100px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" }
-}));
+// const ContentBox = styled("div")(({ theme }) => ({
+//   margin: "30px 100px 30px 100px",
+//   [theme.breakpoints.down("sm")]: { margin: "16px" }
+// }));
+
 const Ticket = () => {
   //   const buttonStyle = {
   //     fontSize: '20px' // Adjust the font size as needed save
@@ -55,6 +60,7 @@ const Ticket = () => {
   const [priority, setPriority] = useState("");
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
+  const [listView, setListView] = useState(false)
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -89,6 +95,9 @@ const Ticket = () => {
     setPriority("")
   };
 
+  const handleListViewChange = () => {
+    setListView(!listView)
+  }
 
 
   const handleTicket = () => {
@@ -136,147 +145,171 @@ const Ticket = () => {
     }
   };
 
+  const handleBack = () => {
+    setListView(false)
+  }
+
+
+  const back = () => {
+    <Link to="/default/dashboard" >
+    </Link>
+  }
 
   return (
-
-
     <>
       <div>
         <ToastContainer />
       </div>
+      {listView ? (
+        <>
+          <AllTickets view={handleBack} listView={listView} />
+        </>
 
+      ) : (
+        <>
+          <div className="card w-full p-3 bg-base-100 shadow-lg customized-container backgroundclr">
+            {/* TITLE NAME */}
+            <div className="flex justify-between mt-3 mb-3">
+              <h7 class="ticketheader">New Ticket</h7>
+            </div>
+            {/* 
 
-      <div className="customized-container backgroundclr">
-        <div className="card w-full p-3 bg-base-100 shadow-lg">
-          <h7 class="ticketheader">New Ticket</h7>
+            <
+              div className="d-flex flex-wrap content-end mb-4" style={{
+                position: 'absolute',
+                left: 1000,
+                top: 30
+              }}>
 
+              <Link to="/ticket/ticket" >
+                <button >
+                  <IoMdClose
+                  // style={{ }}
+                  />
+                </button>
+              </Link>
+            </div> */}
 
+            {/* HEADER BUTTONS ROW */}
+            <div
+              className="d-flex flex-wrap justify-content-start mb-2"
+              style={{ marginBottom: "20px" }}
+            >
+              <Tooltip title="Search" placement="top">
+                <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      ...theme.typography.commonAvatar,
+                      ...theme.typography.mediumAvatar,
+                      transition: "all .2s ease-in-out",
+                      background: theme.palette.primary.light,
+                      color: theme.palette.primary.dark,
+                      '&[aria-controls="menu-list-grow"],&:hover': {
+                        background: theme.palette.primary.dark,
+                        color: theme.palette.primary.light
+                      }
+                    }}
+                    ref={anchorRef}
+                    aria-haspopup="true"
+                    color="inherit"
+                  >
+                    <SearchIcon size="1.3rem" stroke={1.5} />
+                  </Avatar>
+                </ButtonBase>
+              </Tooltip>
 
-          <div className="" style={{ padding: "20px" }}>
-            <div className="row d-flex mt-3 ml">
-              <div
-                className="d-flex flex-wrap justify-content-start mb-4"
-                style={{ marginBottom: "20px" }}
-              >
-                <Tooltip title="Search" placement="top">
-                  <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: "all .2s ease-in-out",
-                        background: theme.palette.primary.light,
-                        color: theme.palette.primary.dark,
-                        '&[aria-controls="menu-list-grow"],&:hover': {
-                          background: theme.palette.primary.dark,
-                          color: theme.palette.primary.light
-                        }
-                      }}
-                      ref={anchorRef}
-                      aria-haspopup="true"
-                      color="inherit"
-                    >
-                      <SearchIcon size="1.3rem" stroke={1.5} />
-                    </Avatar>
-                  </ButtonBase>
-                </Tooltip>
+              <Tooltip title="Clear" placement="top">
+                {" "}
+                <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      ...theme.typography.commonAvatar,
+                      ...theme.typography.mediumAvatar,
+                      transition: "all .2s ease-in-out",
+                      background: theme.palette.primary.light,
+                      color: theme.palette.primary.dark,
+                      '&[aria-controls="menu-list-grow"],&:hover': {
+                        background: theme.palette.primary.dark,
+                        color: theme.palette.primary.light
+                      }
+                    }}
+                    ref={anchorRef}
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={handleClear}
+                  >
+                    <ClearIcon size="1.3rem" stroke={1.5} />
+                  </Avatar>
+                </ButtonBase>
+              </Tooltip>
 
-                <Tooltip title="Clear" placement="top">
-                  {" "}
-                  <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: "all .2s ease-in-out",
-                        background: theme.palette.primary.light,
-                        color: theme.palette.primary.dark,
-                        '&[aria-controls="menu-list-grow"],&:hover': {
-                          background: theme.palette.primary.dark,
-                          color: theme.palette.primary.light
-                        }
-                      }}
-                      ref={anchorRef}
-                      aria-haspopup="true"
-                      color="inherit"
-                      onClick={handleClear}
-                    >
-                      <ClearIcon size="1.3rem" stroke={1.5} />
-                    </Avatar>
-                  </ButtonBase>
-                </Tooltip>
+              <Tooltip title="List View" placement="top">
+                {" "}
+                <ButtonBase sx={{ borderRadius: "12px" }}>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      ...theme.typography.commonAvatar,
+                      ...theme.typography.mediumAvatar,
+                      transition: "all .2s ease-in-out",
+                      background: theme.palette.primary.light,
+                      color: theme.palette.primary.dark,
+                      '&[aria-controls="menu-list-grow"],&:hover': {
+                        background: theme.palette.primary.dark,
+                        color: theme.palette.primary.light
+                      }
+                    }}
+                    ref={anchorRef}
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={handleListViewChange}
+                  >
+                    <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} />
+                  </Avatar>
+                </ButtonBase>
+              </Tooltip>
+              <Tooltip title="Save" placement="top">
+                {" "}
+                <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      ...theme.typography.commonAvatar,
+                      ...theme.typography.mediumAvatar,
+                      transition: "all .2s ease-in-out",
+                      background: theme.palette.primary.light,
+                      color: theme.palette.primary.dark,
+                      '&[aria-controls="menu-list-grow"],&:hover': {
+                        background: theme.palette.primary.dark,
+                        color: theme.palette.primary.light
+                      }
+                    }}
+                    ref={anchorRef}
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={handleTicket}
+                  >
+                    <SaveIcon size="1.3rem" stroke={1.5} />
+                  </Avatar>
+                </ButtonBase>
+              </Tooltip>
 
-                <Tooltip title="List View" placement="top">
-                  {" "}
-                  <ButtonBase sx={{ borderRadius: "12px" }}>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: "all .2s ease-in-out",
-                        background: theme.palette.primary.light,
-                        color: theme.palette.primary.dark,
-                        '&[aria-controls="menu-list-grow"],&:hover': {
-                          background: theme.palette.primary.dark,
-                          color: theme.palette.primary.light
-                        }
-                      }}
-                      ref={anchorRef}
-                      aria-haspopup="true"
-                      color="inherit"
-                    >
-                      <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} />
-                    </Avatar>
-                  </ButtonBase>
-                </Tooltip>
-                <Tooltip title="Save" placement="top">
-                  {" "}
-                  <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: "all .2s ease-in-out",
-                        background: theme.palette.primary.light,
-                        color: theme.palette.primary.dark,
-                        '&[aria-controls="menu-list-grow"],&:hover': {
-                          background: theme.palette.primary.dark,
-                          color: theme.palette.primary.light
-                        }
-                      }}
-                      ref={anchorRef}
-                      aria-haspopup="true"
-                      color="inherit"
-                      onClick={handleTicket}
-                    >
-                      <SaveIcon size="1.3rem" stroke={1.5} />
-                    </Avatar>
-                  </ButtonBase>
-                </Tooltip>
+              <div className="d-flex flex-row"  >
+                <Link to="/dashboard/default">
+
+                  <FaArrowCircleLeft className="cursor-pointer w-8 h-8" style={{
+                    position: 'absolute',
+                    left: 800,
+                    fontSize: "40px"
+                  }} />
+                </Link>
               </div>
 
-              {/* <div className="col-md-3 mb-2">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker
-                  value={docdate}
-                  onChange={(date) => setDocDate(date)}
-                  format="DD/MM/YYYY"
-                  disabled
-                  
-                  slotProps={{
-                    textField: { size: "small", clearable: true },
-                  }}
-
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-          </div> */}
-
+            </div>
+            {/* FIELDS ROW */}
+            <div className="row d-flex mt-3 ml">
               <div className="col-md-4 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -291,9 +324,7 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
-
-              {<div className="col-md-2 mb-3">
+              <div className="col-md-2 mb-3">
                 <FormControl fullWidth size="small">
                   <InputLabel id="demo-simple-select-label">Priority</InputLabel>
                   <Select
@@ -312,8 +343,7 @@ const Ticket = () => {
                     <MenuItem value="Normal">Normal</MenuItem>
                   </Select>
                 </FormControl>
-              </div>}
-
+              </div>
               <div className="col-md-12 mb-3">
                 <TextArea
                   rows={4}
@@ -330,7 +360,6 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
               <div className="col-md-4 mb-3" >
                 <input
                   type="file"
@@ -350,12 +379,6 @@ const Ticket = () => {
                   </Button>
                 </label>
               </div>
-
-
-
-
-
-
               <div className="col-md-2 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -370,7 +393,6 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
               <div className="col-md-2 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -385,7 +407,6 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
               <div className="col-md-2 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -401,7 +422,6 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
               <div className="col-md-2 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -416,7 +436,6 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
-
               <div className="col-md-2 mb-2">
                 <TextField
                   id="outlined-textarea"
@@ -432,10 +451,11 @@ const Ticket = () => {
                   fullWidth
                 />
               </div>
+
             </div>
-          </div>
-        </div>
-      </div>
+          </div >
+        </>
+      )}
     </>
   );
 };
