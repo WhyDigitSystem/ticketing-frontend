@@ -1,34 +1,24 @@
-export const navigations = [
+// Define the navigation items
+const navigationItems = [
   { name: "Dashboard", path: "/dashboard/default", icon: "dashboard" },
   { name: "Ticket", path: "/ticket/ticket", icon: "addbox" },
   { name: "AllTickets", path: "/ticket/alltickets", icon: "reorder" },
-
-
   { name: "Employee", path: "/employee/employee", icon: "addbox" },
-  { name: "AllEmployees", path: "/ticket/allemployees", icon: "reorder" },
-  // { label: "PAGES", type: "label" },
-  // {
-  //   name: "Session/Auth",
-  //   icon: "security",
-  //   children: [
-  //     { name: "Sign in", iconText: "SI", path: "/session/signin" },
-  //     { name: "Sign up", iconText: "SU", path: "/session/signup" },
-  //     { name: "Forgot Password", iconText: "FP", path: "/session/forgot-password" },
-  //     { name: "Error", iconText: "404", path: "/session/404" }
-  //   ]
-  // },
-
-  // { label: "Components", type: "label" },
-
-  // {
-  //   name: "Charts",
-  //   icon: "trending_up",
-  //   children: [{ name: "Echarts", path: "/charts/echarts", iconText: "E" }]
-  // },
-  // {
-  //   name: "Documentation",
-  //   icon: "launch",
-  //   type: "extLink",
-  //   path: "http://demos.ui-lib.com/matx-react-doc/"
-  // }
+  { name: "AllEmployees", path: "/ticket/allemployees", icon: "reorder" }
 ];
+
+// Get the user type from localStorage
+const userType = localStorage.getItem("userType");
+
+// Filter the navigation items based on the user type
+export const navigations = navigationItems.filter((item) => {
+  if (userType === "Employee" && (item.name === "Employee" || item.name === "AllEmployees")) {
+    return false;
+  } else if (
+    userType === "Customer" &&
+    (item.name === "Employee" || item.name === "AllEmployees")
+  ) {
+    return false;
+  }
+  return true;
+});

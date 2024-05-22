@@ -1,12 +1,12 @@
 import DraftsIcon from "@mui/icons-material/Drafts";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import SendIcon from "@mui/icons-material/Send";
+import { styled } from "@mui/material";
 import Button from "@mui/material/Button";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material";
 import React from "react";
 
 // STYLED COMPONENT
@@ -37,7 +37,8 @@ function CustomizedMenu() {
         variant="contained"
         aria-haspopup="true"
         onClick={handleClick}
-        aria-owns={anchorEl ? "simple-menu" : undefined}>
+        aria-owns={anchorEl ? "simple-menu" : undefined}
+      >
         Open Menu
       </Button>
 
@@ -50,7 +51,8 @@ function CustomizedMenu() {
         getContentAnchorEl={null}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         transformOrigin={{ vertical: "top", horizontal: "center" }}
-        sx={{ border: "1px solid #d3d4d5" }}>
+        sx={{ border: "1px solid #d3d4d5" }}
+      >
         <StyledMenuItem>
           <ListItemIcon>
             <SendIcon />

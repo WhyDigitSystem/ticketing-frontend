@@ -1,5 +1,5 @@
-import { Fragment, useState, Children } from "react";
 import { Menu, ThemeProvider, styled } from "@mui/material";
+import { Children, Fragment, useState } from "react";
 
 import useSettings from "app/hooks/useSettings";
 
@@ -31,7 +31,8 @@ export default function MatxMenu(props) {
           onClose={handleClose}
           getContentAnchorEl={null}
           anchorOrigin={{ vertical: "bottom", horizontal: horizontalPosition }}
-          transformOrigin={{ vertical: "top", horizontal: horizontalPosition }}>
+          transformOrigin={{ vertical: "top", horizontal: horizontalPosition }}
+        >
           {children.map((child, index) => (
             <div onClick={shouldCloseOnItemClick ? handleClose : () => {}} key={index}>
               {child}

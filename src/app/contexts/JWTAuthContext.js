@@ -1,5 +1,5 @@
-import { createContext, useEffect, useReducer } from "react";
 import axios from "axios";
+import { createContext, useEffect, useReducer } from "react";
 // CUSTOM COMPONENT
 import { MatxLoading } from "app/components";
 
@@ -62,6 +62,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
+    localStorage.clear();
+    localStorage.setItem("logout", true);
   };
 
   useEffect(() => {

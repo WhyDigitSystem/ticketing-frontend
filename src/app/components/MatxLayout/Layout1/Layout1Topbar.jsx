@@ -1,38 +1,28 @@
+import { Box, Hidden, IconButton, MenuItem, styled, useMediaQuery, useTheme } from "@mui/material";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import {
-  Box,
-  styled,
-  Avatar,
-  Hidden,
-  useTheme,
-  MenuItem,
-  IconButton,
-  useMediaQuery
-} from "@mui/material";
 
 import { NotificationProvider } from "app/contexts/NotificationContext";
 
 import useAuth from "app/hooks/useAuth";
 import useSettings from "app/hooks/useSettings";
 
-import { Span } from "app/components/Typography";
-import ShoppingCart from "app/components/ShoppingCart";
 import { MatxMenu, MatxSearchBox } from "app/components";
-import { NotificationBar } from "app/components/NotificationBar";
 import { themeShadows } from "app/components/MatxTheme/themeColors";
+import { NotificationBar } from "app/components/NotificationBar";
+import { Span } from "app/components/Typography";
 
 import { topBarHeight } from "app/utils/constant";
 
 import {
   Home,
+  MailOutline,
   Menu,
   Person,
+  PowerSettingsNew,
   Settings,
-  WebAsset,
-  MailOutline,
   StarOutline,
-  PowerSettingsNew
+  WebAsset
 } from "@mui/icons-material";
 
 // STYLED COMPONENTS
@@ -139,19 +129,20 @@ const Layout1Topbar = () => {
             <NotificationBar />
           </NotificationProvider>
 
-          <ShoppingCart />
+          {/* <ShoppingCart /> */}
 
           <MatxMenu
             menuButton={
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    Hi <strong>{user.name}</strong>
+                    Hi <strong>{localStorage.getItem("userName")}</strong>
                   </Span>
                 </Hidden>
-                <Avatar src={user.avatar} sx={{ cursor: "pointer" }} />
+                {/* <Avatar src={user.avatar} sx={{ cursor: "pointer" }} /> */}
               </UserMenu>
-            }>
+            }
+          >
             <StyledItem>
               <Link to="/">
                 <Home />

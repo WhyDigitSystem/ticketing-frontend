@@ -1,14 +1,11 @@
 import SaveIcon from "@mui/icons-material/Save";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Avatar, Box, ButtonBase, MenuItem, Select, Table, styled } from "@mui/material";
+import { Box, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 import dayjs from "dayjs";
 import { MaterialReactTable } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaArrowCircleLeft } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
-import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ImageModal from "./ImageModal";
@@ -52,6 +49,7 @@ export default function AllTickets({ view, listView }) {
   const anchorRef = useRef(null);
   const [openImageModal, setOpenImageModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
+  const [selectedTicket, setSelectedTicket] = useState({});
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -117,10 +115,10 @@ export default function AllTickets({ view, listView }) {
     setSelectedStatus(newStatus);
   };
 
-  const handleEmployeeChange = (e, ticketId) => {
+  const handleEmployeeChange = (e, ticketId, row) => {
     const newEmployee = { ...assignedTo, [ticketId]: e.target.value };
     setAssignedTo(newEmployee);
-    console.log("Updated AssignedTo State:", newEmployee);
+    UpdateTicket(ticketId, selectedStatus[ticketId], e.target.value); // Call UpdateTicket with new employee value
   };
 
   const handleEditRow = (row) => {
@@ -128,7 +126,7 @@ export default function AllTickets({ view, listView }) {
     setEdit(true);
   };
 
-  const fetchImage = async (ticketId) => {
+  const fetchImage = async (ticketId, row) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/${ticketId}`);
 
@@ -140,6 +138,13 @@ export default function AllTickets({ view, listView }) {
         if (blob) {
           const imageUrl = URL.createObjectURL(blob);
           setSelectedImageUrl(imageUrl);
+          setSelectedTicket({
+            description: row.original.description,
+            priority: row.original.priority,
+            status: row.original.status,
+            title: row.original.title,
+            assignedTo: row.original.assignedTo
+          });
           setOpenImageModal(true);
         } else {
           console.error("Failed to fetch image data or convert to Blob.");
@@ -180,51 +185,25 @@ export default function AllTickets({ view, listView }) {
         enableColumnOrdering: false,
         enableEditing: false,
         Cell: ({ row }) => (
-          <div>
-            <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
-              <Avatar
-                variant="rounded"
-                sx={{
-                  ...theme.typography.commonAvatar,
-                  ...theme.typography.mediumAvatar,
-                  transition: "all .2s ease-in-out",
-                  background: theme.palette.primary.light,
-                  color: theme.palette.primary.dark,
-                  '&[aria-controls="menu-list-grow"],&:hover': {
-                    background: theme.palette.primary.dark,
-                    color: theme.palette.primary.light
-                  }
-                }}
-                ref={anchorRef}
-                aria-haspopup="true"
-                color="inherit"
-                onClick={() => UpdateTicket(row)}
-              >
-                <SaveIcon size="1.3rem" stroke={1.5} />
-              </Avatar>
-            </ButtonBase>
-            <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
-              <Avatar
-                variant="rounded"
-                sx={{
-                  ...theme.typography.commonAvatar,
-                  ...theme.typography.mediumAvatar,
-                  transition: "all .2s ease-in-out",
-                  background: theme.palette.primary.light,
-                  color: theme.palette.primary.dark,
-                  '&[aria-controls="menu-list-grow"],&:hover': {
-                    background: theme.palette.primary.dark,
-                    color: theme.palette.primary.light
-                  }
-                }}
-                ref={anchorRef}
-                aria-haspopup="true"
-                color="inherit"
-                onClick={() => fetchImage(row.original.id)} // Add onClick to fetchImage function
-              >
-                <VisibilityIcon size="1.3rem" stroke={1.5} />
-              </Avatar>
-            </ButtonBase>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <SaveIcon
+              size="1.3rem"
+              stroke={1}
+              onClick={() =>
+                UpdateTicket(
+                  row.original.id,
+                  selectedStatus[row.original.id],
+                  assignedTo[row.original.id]
+                )
+              }
+              style={{ cursor: "pointer" }}
+            />
+            <VisibilityIcon
+              size="1.3rem"
+              style={{ cursor: "pointer" }}
+              stroke={1}
+              onClick={() => fetchImage(row.original.id, row)}
+            />
           </div>
         )
       },
@@ -263,7 +242,7 @@ export default function AllTickets({ view, listView }) {
         Cell: ({ row }) => (
           <Select
             value={selectedStatus[row.original.id] || ""}
-            onChange={(e) => handleStatusChange(e, row.original.id)}
+            onChange={(e) => handleStatusChange(e, row.original.id, row)}
             sx={{ minWidth: 120 }}
           >
             {statusOptions.map((option) => (
@@ -287,7 +266,7 @@ export default function AllTickets({ view, listView }) {
         Cell: ({ row }) => (
           <Select
             value={assignedTo[row.original.id] || ""}
-            onChange={(e) => handleEmployeeChange(e, row.original.id)}
+            onChange={(e) => handleEmployeeChange(e, row.original.id, row)}
             sx={{ minWidth: 120 }}
           >
             {employeedata.map((employee) => (
@@ -324,11 +303,7 @@ export default function AllTickets({ view, listView }) {
     [selectedStatus, assignedTo, employeedata]
   );
 
-  const UpdateTicket = (row) => {
-    const ticketId = row.original.id;
-    const updatedStatus = selectedStatus[ticketId];
-    const updatedEmployee = assignedTo[ticketId];
-
+  const UpdateTicket = (ticketId, updatedStatus, updatedEmployee) => {
     const errors = {};
     if (!updatedStatus) errors.status = "Status is required";
     if (!updatedEmployee) errors.assignedTo = "Assigned To is required";
@@ -360,21 +335,22 @@ export default function AllTickets({ view, listView }) {
 
   return (
     // <div className="customized-container backgroundclr">
-    <div className="card shadow-lg customized-container backgroundclr">
+    <div className="shadow-lg customized-container backgroundclr">
       <div className="flex justify-between mt-1 mb-1">
-        <h7 class="ticketheader">Tickets</h7>
+        {/* <h6 class="ticketheader mt-1">
+          <center>Tickets</center>
+        </h6> */}
       </div>
       {/* <h3 className="text-2xl font-semibold mt-4">Tickets</h3> */}
       {/* <div className="justify-content-end mt-4"> */}
 
       {listView ? (
         <>
-          <div
-            className="d-flex flex-wrap content-end mb-4"
+          {/* <div
+            className="d-flex flex-wrap content-end"
             style={{
               position: "absolute",
-              left: 900,
-              top: 30
+              left: 900
             }}
           >
             <button>
@@ -385,11 +361,11 @@ export default function AllTickets({ view, listView }) {
                 }}
               />
             </button>
-          </div>
+          </div> */}
         </>
       ) : (
         <div className="d-flex flex-row">
-          <Link to="/dashboard/default">
+          {/* <Link to="/dashboard/default">
             <FaArrowCircleLeft
               className="cursor-pointer w-8 h-8"
               style={{
@@ -398,11 +374,11 @@ export default function AllTickets({ view, listView }) {
                 fontSize: "30px"
               }}
             />
-          </Link>
+          </Link> */}
         </div>
       )}
-      <div className="grid lg:grid-cols-6 mt-4 md:grid-cols-3 grid-cols-1 gap-6">
-        <div className="mt-4">
+      <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-6">
+        <div className="mt-2">
           <MaterialReactTable
             displayColumnDefOptions={{
               "mrt-row-actions": {
@@ -432,6 +408,11 @@ export default function AllTickets({ view, listView }) {
         open={openImageModal}
         imageUrl={selectedImageUrl}
         onClose={() => setOpenImageModal(false)}
+        description={selectedTicket.description}
+        priority={selectedTicket.priority}
+        status={selectedTicket.status}
+        title={selectedTicket.title}
+        assignedTo={selectedTicket.assignedTo}
       />
     </div>
   );

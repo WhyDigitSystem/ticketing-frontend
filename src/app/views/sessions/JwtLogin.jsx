@@ -5,7 +5,7 @@ import useAuth from "app/hooks/useAuth";
 import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
 import { Formik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -87,6 +87,14 @@ export default function JwtLogin() {
   //   };
   // };
 
+  useEffect(() => {
+    const isLoggedOut = localStorage.getItem("logout");
+    if (isLoggedOut) {
+      localStorage.removeItem("logout");
+      window.location.reload();
+    }
+  }, []);
+
   const handleFormSubmit = async (values) => {
     // Prepare the user registration data
 
@@ -107,36 +115,19 @@ export default function JwtLogin() {
         }
       );
 
-      if (!response.data.status) {
+      if (response.data.status) {
         // Handle authentication failure, display an error message, etc.
+        localStorage.setItem("userType", response.data.paramObjectsMap.userVO.type);
+        localStorage.setItem("userName", response.data.paramObjectsMap.userVO.firstName);
+
+        navigate("/dashboard/default");
+      } else {
+        // Successful registration, perform actions like storing tokens and redirecting
+
         toast.error(response.data.paramObjectsMap.errorMessage, {
           autoClose: 2000,
           theme: "colored"
         });
-        console.log("Test1", userData);
-      } else {
-        // Successful registration, perform actions like storing tokens and redirecting
-        localStorage.setItem("token", "YourAuthTokenHere"); // Replace with the actual token
-        // resetForm();
-        // window.location.href = "/login";
-
-        navigate("/dashboard/default");
-        localStorage.setItem("AccountCreated", true);
-        // if (checked) {
-        //   localStorage.setItem(
-        //     "rememberedCredentials",
-        //     JSON.stringify({ email: values.email, password: values.password })
-        //   );
-        // } else {
-        //   // Clear stored credentials if "Remember Me" is unchecked
-        //   localStorage.removeItem("rememberedCredentials");
-        // }
-        // setTimeout(() => {
-        //   toast.success(response.data.paramObjectsMap.message, {
-        //     autoClose: 2000,
-        //     theme: 'colored'
-        //   });
-        // }, 2000);
       }
     } catch (error) {
       localStorage.setItem("AccountCreated", false);

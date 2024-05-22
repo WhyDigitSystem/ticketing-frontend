@@ -2,8 +2,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBulletedTwoTone";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, ButtonBase, Tooltip } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Tooltip } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -150,102 +149,23 @@ const Ticket = () => {
           </div>
           <div
             className="d-flex flex-wrap justify-content-start mb-2"
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: "20px", gap: "10px", cursor: "pointer" }}
           >
             <Tooltip title="Search" placement="top">
-              <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <SearchIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
+              <SearchIcon size="2rem" stroke={1.5} />
             </Tooltip>
             <Tooltip title="Clear" placement="top">
-              <ButtonBase sx={{ borderRadius: "12px", marginRight: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleClear}
-                >
-                  <ClearIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
+              <ClearIcon size="2rem" stroke={1.5} onClick={handleClear} />
             </Tooltip>
             <Tooltip title="List View" placement="top">
-              <ButtonBase sx={{ borderRadius: "12px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleListViewChange}
-                >
-                  <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
+              <FormatListBulletedTwoToneIcon
+                size="2rem"
+                stroke={1.5}
+                onClick={handleListViewChange}
+              />
             </Tooltip>
             <Tooltip title="Save" placement="top">
-              <ButtonBase sx={{ borderRadius: "12px", marginLeft: "10px" }}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    ...theme.typography.commonAvatar,
-                    ...theme.typography.mediumAvatar,
-                    transition: "all .2s ease-in-out",
-                    background: theme.palette.primary.light,
-                    color: theme.palette.primary.dark,
-                    '&[aria-controls="menu-list-grow"],&:hover': {
-                      background: theme.palette.primary.dark,
-                      color: theme.palette.primary.light
-                    }
-                  }}
-                  ref={anchorRef}
-                  aria-haspopup="true"
-                  color="inherit"
-                  onClick={handleTicket}
-                >
-                  <SaveIcon size="1.3rem" stroke={1.5} />
-                </Avatar>
-              </ButtonBase>
+              <SaveIcon size="2rem" stroke={1.5} onClick={handleTicket} />
             </Tooltip>
             <div className="d-flex flex-row">
               <Link to="/dashboard/default">
@@ -253,7 +173,7 @@ const Ticket = () => {
                   className="cursor-pointer w-8 h-8"
                   style={{
                     position: "absolute",
-                    left: 800,
+                    left: 950,
                     fontSize: "40px"
                   }}
                 />
@@ -319,9 +239,20 @@ const Ticket = () => {
                 style={{ display: "none" }}
               />
               <label htmlFor="file-input">
-                <Button variant="contained" component="span">
+                {/* <Button
+                  variant="contained"
+                  component="span"
+                  style={{ backgroundColor: "black", color: "white" }}
+                >
                   Upload file
-                </Button>
+                </Button> */}
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/15785/15785038.png"
+                  width={40}
+                  height={40}
+                  style={{ cursor: "pointer", marginLeft: "12px" }}
+                ></img>
+                <div>File Upload</div>
               </label>
               <div>
                 {selectedFiles.map((fileName, index) => (

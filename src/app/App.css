@@ -1,11 +1,11 @@
-.backgroundclr{
-    background-color: #f2f2f2;
+.backgroundclr {
+  background-color: #f2f2f2;
 }
 
-.customized-container{
-    margin: 30px 100px 30px 100px;
+.customized-container {
+  margin: 30px 25px 30px 35px;
 }
 
 .mouse-cursor {
-    cursor: pointer;
+  cursor: pointer;
 }

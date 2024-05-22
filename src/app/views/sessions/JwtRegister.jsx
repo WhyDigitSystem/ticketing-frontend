@@ -1,5 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Card, Checkbox, Grid, TextField, styled, useTheme } from "@mui/material";
+import { Paragraph } from "app/components/Typography";
+import useAuth from "app/hooks/useAuth";
 import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
 import { Formik } from "formik";
@@ -8,9 +10,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-
-import { Paragraph } from "app/components/Typography";
-import useAuth from "app/hooks/useAuth";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -46,15 +45,18 @@ const initialValues = {
   email: "",
   password: "",
   username: "",
+  type: "Customer",
   remember: true
 };
 
 // form field validation schema
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(6, "Password must be 6 character length")
+    .min(6, "Password must be 6 characters long")
     .required("Password is required!"),
-  email: Yup.string().email("Invalid Email address").required("Email is required!")
+  email: Yup.string().email("Invalid Email address").required("Email is required!"),
+  username: Yup.string().required("Username is required!"),
+  type: Yup.string().required("User type is required!")
 });
 
 export default function JwtRegister() {
@@ -62,40 +64,29 @@ export default function JwtRegister() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [buttonHide, setButtonHide] = useState(false); // State to hide LoadingButton
 
   const resetForm = () => {
     const initialValues = {
       email: "",
       password: "",
       username: "",
+      type: "Customer",
       remember: true
     };
   };
 
-  // const handleFormSubmit = (values) => {
-  //   setLoading(true);
-
-  //   try {
-  //     register(values.email, values.username, values.password);
-  //     navigate("/");
-  //     setLoading(false);
-  //   } catch (e) {
-  //     console.log(e);
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleFormSubmit = async (values) => {
-    // Prepare the user registration data
+    setLoading(true);
 
+    // Prepare the user registration data
     const userData = {
       firstName: values.username,
       email: values.email,
       password: encryptPassword(values.password),
-      userName: values.email
+      userName: values.email,
+      type: values.type
     };
-
-    console.log("Test", userData);
 
     try {
       const response = await axios.post(
@@ -114,13 +105,11 @@ export default function JwtRegister() {
           autoClose: 2000,
           theme: "colored"
         });
-        console.log("Test1", userData);
+        setButtonHide(true); // Set buttonHide state to true on error
       } else {
         // Successful registration, perform actions like storing tokens and redirecting
         localStorage.setItem("token", "YourAuthTokenHere"); // Replace with the actual token
         resetForm();
-        // window.location.href = "/login";
-
         toast.success(response.data.paramObjectsMap.message, {
           autoClose: 2000,
           theme: "colored"
@@ -130,7 +119,13 @@ export default function JwtRegister() {
         }, 2000);
       }
     } catch (error) {
-      localStorage.setItem("AccountCreated", false);
+      toast.error("Error registering user. Please try again later.", {
+        autoClose: 2000,
+        theme: "colored"
+      });
+      setButtonHide(true); // Set buttonHide state to true on error
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,6 +199,25 @@ export default function JwtRegister() {
                       sx={{ mb: 2 }}
                     />
 
+                    {/* <FormControl fullWidth size="small" sx={{ mb: 3 }}>
+                      <InputLabel id="type-label">User Type</InputLabel>
+                      <Select
+                        labelId="type-label"
+                        id="type"
+                        name="type"
+                        value={values.type}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={Boolean(errors.type && touched.type)}
+                      >
+                        <MenuItem value="Customer">Customer</MenuItem>
+                        <MenuItem value="Employee">Employee</MenuItem>
+                      </Select>
+                      {errors.type && touched.type && (
+                        <FormHelperText error>{errors.type}</FormHelperText>
+                      )}
+                    </FormControl> */}
+
                     <FlexBox gap={1} alignItems="center">
                       <Checkbox
                         size="small"
@@ -218,21 +232,26 @@ export default function JwtRegister() {
                       </Paragraph>
                     </FlexBox>
 
-                    <LoadingButton
-                      type="submit"
-                      color="primary"
-                      loading={loading}
-                      variant="contained"
-                      sx={{ mb: 2, mt: 3 }}
-                    >
-                      Register
-                    </LoadingButton>
+                    {!buttonHide && (
+                      <LoadingButton
+                        type="submit"
+                        color="primary"
+                        loading={loading}
+                        variant="contained"
+                        sx={{ mb: 2, mt: 3 }}
+                      >
+                        Register
+                      </LoadingButton>
+                    )}
 
                     <Paragraph>
                       Already have an account?
                       <NavLink
                         to="/session/signin"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                        style={{
+                          color: theme.palette.primary.main,
+                          marginLeft: 5
+                        }}
                       >
                         Login
                       </NavLink>
