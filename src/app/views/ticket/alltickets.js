@@ -335,7 +335,7 @@ export default function AllTickets({ view, listView }) {
 
   return (
     // <div className="customized-container backgroundclr">
-    <div className="shadow-lg customized-container backgroundclr">
+    <div className="">
       <div className="flex justify-between mt-1 mb-1">
         {/* <h6 class="ticketheader mt-1">
           <center>Tickets</center>

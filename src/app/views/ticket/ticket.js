@@ -140,47 +140,46 @@ const Ticket = () => {
       <div>
         <ToastContainer />
       </div>
-      {listView ? (
-        <AllTickets view={handleBack} listView={listView} />
-      ) : (
-        <div className="card w-full p-3 bg-base-100 shadow-lg customized-container backgroundclr">
-          <div className="flex justify-between mt-3 mb-3">
-            <h7 className="ticketheader">New Ticket</h7>
-          </div>
-          <div
-            className="d-flex flex-wrap justify-content-start mb-2"
-            style={{ marginBottom: "20px", gap: "10px", cursor: "pointer" }}
-          >
-            <Tooltip title="Search" placement="top">
-              <SearchIcon size="2rem" stroke={1.5} />
-            </Tooltip>
-            <Tooltip title="Clear" placement="top">
-              <ClearIcon size="2rem" stroke={1.5} onClick={handleClear} />
-            </Tooltip>
-            <Tooltip title="List View" placement="top">
-              <FormatListBulletedTwoToneIcon
-                size="2rem"
-                stroke={1.5}
-                onClick={handleListViewChange}
+
+      <div className="card w-full p-3 bg-base-100 shadow-lg customized-container">
+        <div className="flex justify-between mb-3">
+          <h7 className="ticketheader">New Ticket</h7>
+        </div>
+        <div
+          className="d-flex flex-wrap justify-content-start"
+          style={{ gap: "10px", cursor: "pointer", padding: "20px" }}
+        >
+          <Tooltip title="Search" placement="top">
+            <SearchIcon size="2rem" stroke={1.5} />
+          </Tooltip>
+          <Tooltip title="Clear" placement="top">
+            <ClearIcon size="2rem" stroke={1.5} onClick={handleClear} />
+          </Tooltip>
+          <Tooltip title="List View" placement="top">
+            <FormatListBulletedTwoToneIcon
+              size="2rem"
+              stroke={1.5}
+              onClick={handleListViewChange}
+            />
+          </Tooltip>
+          <Tooltip title="Save" placement="top">
+            <SaveIcon size="2rem" stroke={1.5} onClick={handleTicket} />
+          </Tooltip>
+          <div className="d-flex flex-row">
+            <Link to="/dashboard/default">
+              <FaArrowCircleLeft
+                className="cursor-pointer w-8 h-8"
+                style={{
+                  position: "absolute",
+                  left: 950,
+                  fontSize: "40px"
+                }}
               />
-            </Tooltip>
-            <Tooltip title="Save" placement="top">
-              <SaveIcon size="2rem" stroke={1.5} onClick={handleTicket} />
-            </Tooltip>
-            <div className="d-flex flex-row">
-              <Link to="/dashboard/default">
-                <FaArrowCircleLeft
-                  className="cursor-pointer w-8 h-8"
-                  style={{
-                    position: "absolute",
-                    left: 950,
-                    fontSize: "40px"
-                  }}
-                />
-              </Link>
-            </div>
+            </Link>
           </div>
-          <div className="row d-flex mt-3 ml">
+        </div>
+        {!listView ? (
+          <div className="row d-flex" style={{ padding: "20px 20px 0px 20px" }}>
             <div className="col-md-4 mb-3">
               <TextField
                 id="outlined-textarea"
@@ -261,8 +260,10 @@ const Ticket = () => {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <AllTickets view={handleBack} listView={listView} />
+        )}
+      </div>
     </>
   );
 };

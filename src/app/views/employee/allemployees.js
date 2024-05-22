@@ -1,144 +1,232 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-    Box,
-    Icon,
-    Table,
-    styled,
-    TableRow,
-    TableBody,
-    TableCell,
-    TableHead,
-    IconButton,
-    TablePagination, TableContainer, Paper
-} from "@mui/material";
-
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Box, Table, styled } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import axios from "axios";
+import { MaterialReactTable } from "material-react-table";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // STYLED COMPONENT
 const StyledTable = styled(Table)(() => ({
-    whiteSpace: "pre",
-    "& thead": {
-        "& tr": { "& th": { paddingLeft: 0, paddingRight: 0 } }
-    },
-    "& tbody": {
-        "& tr": { "& td": { paddingLeft: 0, textTransform: "capitalize" } }
+  whiteSpace: "pre",
+  "& thead": {
+    "& tr": {
+      "& th": { paddingLeft: 0, paddingRight: 0 }
     }
+  },
+  "& tbody": {
+    "& tr": {
+      "& td": { paddingLeft: 0, textTransform: "capitalize" }
+    }
+  }
 }));
 
+export default function EmployeeTable({ view, listView }) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [data, setData] = useState([]);
+  const [employeedata, setEmployeeData] = useState([]);
+  const [statusOptions] = useState(["Active", "Inactive"]);
+  const [selectedStatus, setSelectedStatus] = useState({});
+  const [edit, setEdit] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [errors, setErrors] = useState({});
+  const theme = useTheme();
+  const anchorRef = useRef(null);
 
+  useEffect(() => {
+    getEmployeeData();
+  }, []);
 
-export default function AllEmloyees() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+  const getEmployeeData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/employee/getAllEmployee`
+      );
 
-    const [add, setAdd] = useState(false);
-    const [data, setData] = useState([]);
-    const [openView, setOpenView] = useState(false);
-    const [orgId, setOrgId] = useState(localStorage.getItem("orgId"));
-    const [selectedRowData, setSelectedRowData] = useState(null);
-    const [edit, setEdit] = useState(false);
-    const [selectedRowId, setSelectedRowId] = useState(null);
+      if (response.status === 200) {
+        setEmployeeData(response.data.paramObjectsMap.employeeVO.reverse());
 
+        const initialStatus = {};
+        response.data.paramObjectsMap.employeeVO.forEach((employee) => {
+          initialStatus[employee.id] = employee.status || "";
+        });
+        setSelectedStatus(initialStatus);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
 
+  const handleStatusChange = (e, employeeId) => {
+    const newStatus = { ...selectedStatus, [employeeId]: e.target.value };
+    setSelectedStatus(newStatus);
+  };
 
-    const handleChangePage = (_, newPage) => {
-        setPage(newPage);
-    };
-
-
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
-    useEffect(() => {
-        getEmployeeData();
-    }, []);
-
-    const getEmployeeData = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API_URL}/api/employee/getAllEmployee`
-            );
-
-            if (response.status === 200) {
-                setData(response.data.paramObjectsMap.employeeVO.reverse());
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "actions",
+        header: "Actions",
+        size: 120,
+        muiTableHeadCellProps: {
+          align: "left"
+        },
+        muiTableBodyCellProps: {
+          align: "left"
+        },
+        enableSorting: false,
+        enableColumnOrdering: false,
+        enableEditing: false,
+        Cell: ({ row }) => (
+          <div style={{ display: "flex", gap: "10px" }}>
+            {/* <SaveIcon
+              size="1.3rem"
+              stroke={1}
+              onClick={() => updateEmployeeStatus(row.original.id, selectedStatus[row.original.id])}
+              style={{ cursor: "pointer" }}
+            /> */}
+            <VisibilityIcon
+              size="1.3rem"
+              style={{ cursor: "pointer" }}
+              stroke={1}
+              onClick={() => viewEmployeeDetails(row.original.id)}
+            />
+          </div>
+        )
+      },
+      {
+        accessorKey: "id",
+        header: "Employee ID",
+        size: 120,
+        muiTableHeadCellProps: {
+          align: "left"
+        },
+        muiTableBodyCellProps: {
+          align: "left"
         }
-    };
+      },
+      {
+        accessorKey: "employee",
+        header: "Name",
+        size: 120,
+        muiTableHeadCellProps: {
+          align: "left"
+        },
+        muiTableBodyCellProps: {
+          align: "left"
+        }
+      },
+      //   {
+      //     accessorKey: "status",
+      //     header: "Status",
+      //     size: 120,
+      //     muiTableHeadCellProps: {
+      //       align: "left"
+      //     },
+      //     muiTableBodyCellProps: {
+      //       align: "left"
+      //     },
+      //     Cell: ({ row }) => (
+      //       <Select
+      //         value={selectedStatus[row.original.id] || ""}
+      //         onChange={(e) => handleStatusChange(e, row.original.id)}
+      //         sx={{ minWidth: 120 }}
+      //       >
+      //         {statusOptions.map((option) => (
+      //           <MenuItem key={option} value={option}>
+      //             {option}
+      //           </MenuItem>
+      //         ))}
+      //       </Select>
+      //     )
+      //   },
+      //   {
+      //     accessorKey: "email",
+      //     header: "Email",
+      //     size: 120,
+      //     muiTableHeadCellProps: {
+      //       align: "left"
+      //     },
+      //     muiTableBodyCellProps: {
+      //       align: "left"
+      //     }
+      //   },
+      {
+        accessorKey: "department",
+        header: "Department",
+        size: 120,
+        muiTableHeadCellProps: {
+          align: "left"
+        },
+        muiTableBodyCellProps: {
+          align: "left"
+        }
+      }
+    ],
+    [selectedStatus]
+  );
 
-    const handleViewRow = (row) => {
-        setSelectedRowData(row.original);
-        console.log("setSelectedRowData", row.original);
-        setOpenView(true);
-    };
+  const updateEmployeeStatus = (employeeId, updatedStatus) => {
+    const errors = {};
+    if (!updatedStatus) errors.status = "Status is required";
 
+    if (Object.keys(errors).length === 0) {
+      const formData = {
+        status: updatedStatus,
+        id: employeeId
+      };
 
+      axios
+        .put(`${process.env.REACT_APP_API_URL}/api/employee/updateStatus`, formData)
+        .then((response) => {
+          toast.success("Employee status updated successfully", {
+            autoClose: 2000,
+            theme: "colored"
+          });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      setErrors(errors);
+    }
+  };
 
-    return (
+  const viewEmployeeDetails = (employeeId) => {
+    // Implement view employee details logic here
+  };
 
-        <div className="card w-full p-6 bg-base-100 shadow-xl" style={{ padding: "20px" }}>
-            <div className="row d-flex mt-3 ml">
-                <div
-                    className="d-flex flex-wrap justify-content-start mb-4"
-                    style={{ marginBottom: "20px" }}
-                >
-                    <Box width="100%" overflow="auto">
-                        <StyledTable>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left">Employee</TableCell>
-                                    <TableCell align="left">Code</TableCell>
-                                    <TableCell align="left">Department</TableCell>
-                                    <TableCell align="left">DOJ</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {data
-                                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((data, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell align="left">{data.employee}</TableCell>
-                                            <TableCell align="left">{data.code}</TableCell>
-                                            <TableCell align="left">{data.department}</TableCell>
-                                            <TableCell align="left">{data.doj}</TableCell>
-                                            <TableCell align="right">
-                                                <IconButton>
-                                                    <Icon color="error">close</Icon>
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </StyledTable>
-
-                        <TablePagination
-                            sx={{ px: 2 }}
-                            page={page}
-                            component="div"
-                            rowsPerPage={rowsPerPage}
-                            count={data.length}
-                            onPageChange={handleChangePage}
-                            rowsPerPageOptions={[5, 10, 25]}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            nextIconButtonProps={{ "aria-label": "Next Page" }}
-                            backIconButtonProps={{ "aria-label": "Previous Page" }}
-                        />
-                    </Box>
-                </div>
-            </div>
+  return (
+    <div className="">
+      <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-6">
+        <div className="mt-2">
+          <MaterialReactTable
+            displayColumnDefOptions={{
+              "mrt-row-actions": {
+                muiTableHeadCellProps: {
+                  align: "left"
+                },
+                size: 100
+              }
+            }}
+            columns={columns}
+            data={employeedata}
+            editingMode="modal"
+            renderRowActions={({ row, table }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "1rem",
+                  justifyContent: "flex-end"
+                }}
+              ></Box>
+            )}
+          />
+          <ToastContainer />
         </div>
-
-
-
-    );
+      </div>
+    </div>
+  );
 }
