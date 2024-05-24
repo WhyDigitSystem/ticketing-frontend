@@ -21,13 +21,15 @@ const ContentBox = styled("div")(() => ({
   padding: "32px",
   position: "relative",
   background: "rgba(0, 0, 0, 0.01)"
+   
 }));
 
 const StyledRoot = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#1A2038",
+  // backgroundColor: "#1A2038",
+  background: "linear-gradient(to right, #3498db, #2ecc71)",
   minHeight: "100% !important",
   "& .card": {
     maxWidth: 800,
@@ -143,7 +145,7 @@ export default function JwtLogin() {
         <Grid container>
           <Grid item sm={6} xs={12}>
             <div className="img-wrapper">
-              <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" />
+              {/* <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" /> */}
             </div>
           </Grid>
 

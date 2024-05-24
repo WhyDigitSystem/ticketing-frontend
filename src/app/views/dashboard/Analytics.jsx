@@ -7,6 +7,7 @@ import RowCards from "./shared/RowCards";
 import StatCards from "./shared/StatCards";
 import StatCards2 from "./shared/StatCards2";
 import UpgradeCard from "./shared/UpgradeCard";
+import TopSellingTable from "./shared/TopSellingTable";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
@@ -43,8 +44,8 @@ export default function Analytics() {
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
-            {/* <TopSellingTable /> */}
-            <AllTickets hideTitle={true} hideStatus={true} />
+            <TopSellingTable  hideStatus={true} />
+            {/* <AllTickets hideTitle={true} hideStatus={true} /> */}
             <br></br>
             <StatCards2 />
 

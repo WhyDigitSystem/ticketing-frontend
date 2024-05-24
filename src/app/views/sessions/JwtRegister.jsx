@@ -28,7 +28,8 @@ const ContentBox = styled(JustifyBox)(() => ({
 }));
 
 const JWTRegister = styled(JustifyBox)(() => ({
-  background: "#1A2038",
+  // background: "#1A2038",
+  background: "linear-gradient(to right, #3498db, #2ecc71)",
   minHeight: "100vh !important",
   "& .card": {
     maxWidth: 800,
@@ -140,8 +141,8 @@ export default function JwtRegister() {
             <ContentBox>
               <img
                 width="100%"
-                alt="Register"
-                src="/assets/images/illustrations/posting_photo.svg"
+                // alt="Register"
+                // src="/assets/images/illustrations/posting_photo.svg"
               />
             </ContentBox>
           </Grid>
