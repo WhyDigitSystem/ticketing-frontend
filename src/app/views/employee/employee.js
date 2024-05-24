@@ -8,6 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
 import { useCallback, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -100,8 +101,19 @@ const Employee = () => {
         doj
       };
 
+      const encryptedPassword = encryptPassword(formData.password);
+
+      // Include the encrypted password in the form data
+      const formDataWithEncryptedPassword = {
+        ...formData,
+        password: encryptedPassword
+      };
+
       axios
-        .post(`${process.env.REACT_APP_API_URL}/api/employee/createemployee`, formData)
+        .post(
+          `${process.env.REACT_APP_API_URL}/api/employee/createemployee`,
+          formDataWithEncryptedPassword
+        )
         .then((response) => {
           setClient("");
           setEmployee("");
@@ -129,26 +141,33 @@ const Employee = () => {
       <div>
         <ToastContainer />
       </div>
-      <h6 className="ticketheader">New Employee</h6>
+      {viewEmployee && (
+        <div>
+          {" "}
+          <h6 className="ticketheader">New Employee</h6>
+        </div>
+      )}
       <div className="" style={{ padding: "20px" }}>
         <div className="row d-flex mt-3 ml">
-          <div
-            className="d-flex flex-wrap justify-content-start mb-4"
-            style={{ marginBottom: "20px", gap: "10px", cursor: "pointer" }}
-          >
-            <Tooltip title="Search" placement="top">
-              <SearchIcon size="1.3rem" stroke={1.5} />
-            </Tooltip>
-            <Tooltip title="Clear" placement="top">
-              <ClearIcon size="1.3rem" stroke={1.5} onClick={handleClear} />
-            </Tooltip>
-            <Tooltip title="List View" placement="top">
-              <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} onClick={viewAll} />
-            </Tooltip>
-            <Tooltip title="Save" placement="top">
-              <SaveIcon size="1.3rem" stroke={1.5} onClick={handleEmployee} />
-            </Tooltip>
-          </div>
+          {viewEmployee && (
+            <div
+              className="d-flex flex-wrap justify-content-start mb-4"
+              style={{ marginBottom: "20px", gap: "10px", cursor: "pointer" }}
+            >
+              <Tooltip title="Search" placement="top">
+                <SearchIcon size="1.3rem" stroke={1.5} />
+              </Tooltip>
+              <Tooltip title="Clear" placement="top">
+                <ClearIcon size="1.3rem" stroke={1.5} onClick={handleClear} />
+              </Tooltip>
+              <Tooltip title="List View" placement="top">
+                <FormatListBulletedTwoToneIcon size="1.3rem" stroke={1.5} onClick={viewAll} />
+              </Tooltip>
+              <Tooltip title="Save" placement="top">
+                <SaveIcon size="1.3rem" stroke={1.5} onClick={handleEmployee} />
+              </Tooltip>
+            </div>
+          )}
 
           {viewEmployee ? (
             <div className="row">

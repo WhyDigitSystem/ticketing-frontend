@@ -1,12 +1,12 @@
-import { Fragment } from "react";
 import { Card, Grid, styled, useTheme } from "@mui/material";
+import { Fragment } from "react";
+import AllTickets from "../ticket/alltickets";
+import Campaigns from "./shared/Campaigns";
+import DoughnutChart from "./shared/Doughnut";
 import RowCards from "./shared/RowCards";
 import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
 import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
 import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
@@ -43,7 +43,9 @@ export default function Analytics() {
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
-            <TopSellingTable />
+            {/* <TopSellingTable /> */}
+            <AllTickets hideTitle={true} hideStatus={true} />
+            <br></br>
             <StatCards2 />
 
             <H4>Ongoing Projects</H4>

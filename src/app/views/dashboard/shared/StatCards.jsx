@@ -1,14 +1,8 @@
+import { ArrowRightAlt, AttachMoney, ShoppingCart, Store } from "@mui/icons-material";
 import { Box, Card, Grid, IconButton, styled, Tooltip } from "@mui/material";
-import { AttachMoney, Group, ShoppingCart, Store, ArrowRightAlt, NearMeDisabledTwoTone, NearMe } from "@mui/icons-material";
-import { Small } from "app/components/Typography";
-import { lazy } from "react";
-import Loadable from "app/components/Loadable";
-import Ticket from "app/views/ticket/ticket";
 import { Link } from "react-router-dom";
 // import "./statcard.css";
 // import "./statcard1.css";
-
-
 
 // STYLED COMPONENTS
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -37,7 +31,6 @@ const Heading = styled("h6")(({ theme }) => ({
   color: theme.palette.primary.main
 }));
 
-
 // const TicketNew = Loadable(lazy(() => import("app/views/ticket/ticket")));
 
 export default function StatCards() {
@@ -50,53 +43,34 @@ export default function StatCards() {
   ];
 
   return (
-    
     <>
+      <Grid container spacing={3} sx={{ mb: "24px" }}>
+        {cardList.map(({ amount, Icon, name }) => (
+          <Grid item xs={12} md={6} key={name}>
+            <StyledCard elevation={8}>
+              <ContentBox>
+                <Icon className="icon" />
 
+                <Box ml="12px" style={{ fontSize: "20px" }}>
+                  {/* <Small>{name}</Small> */}
+                  <Link to={amount}> {name}</Link>
+                </Box>
+              </ContentBox>
 
-    
+              <Tooltip title="Go" placement="top">
+                <IconButton>
+                  <Link to={amount}>
+                    {" "}
+                    <ArrowRightAlt />
+                  </Link>
+                </IconButton>
+              </Tooltip>
+            </StyledCard>
+          </Grid>
+        ))}
+      </Grid>
 
-    <Grid container spacing={3} sx={{ mb: "24px" }}>
-      {cardList.map(({ amount, Icon, name }) => (
-        <Grid item xs={12} md={6} key={name} >
-          <StyledCard elevation={8}  >
-            <ContentBox>
-              <Icon className="icon" />
-
-              <Box ml="12px" style={{fontSize:"20px"}}>
-                {/* <Small>{name}</Small> */}
-                 <Link to = {amount} > {name}
-                </Link> 
-                
-              </Box>
-              
-            </ContentBox>
-
-            
-            <Tooltip title="Go" placement="top">
-              <IconButton>
-              
-              <Link to = {amount} > <ArrowRightAlt/>
-                </Link> 
-                
-              </IconButton>
-            </Tooltip>
-          </StyledCard>
-
-        </Grid>
-       
-        
-
-        
-      ))}
-
-
-
-
-    </Grid>
-
-
-    <div id="container">
+      {/* <div id="container">
   <div id="success-box">
     <div class="dot"></div>
     <div class="dot two"></div>
@@ -121,11 +95,9 @@ export default function StatCards() {
     <div class="message"><h1 class="alert">Error!</h1>oh no, something went wrong.</div>
     <button class="button-box"><h1 class="red">try again</h1></button>
   </div>
-</div>
+</div> */}
 
-
-
-    {/* <link href="https://fonts.googleapis.com/css? family=Lato"rel="stylesheet"type="text/css"/>
+      {/* <link href="https://fonts.googleapis.com/css? family=Lato"rel="stylesheet"type="text/css"/>
 
     
 	<input type="checkbox" class="toggle"id="toggle" unchecked="unchecked"/>
@@ -168,15 +140,7 @@ export default function StatCards() {
 </div>
  */}
 
-
-
-
-
-
-
-
-    
-{/* 
+      {/* 
     <div className="col-lg-6 card bg-base-100 shadow-xl mb-4 mt-2">
             <>
                   <Link to="/ticket/ticket">
@@ -189,8 +153,6 @@ export default function StatCards() {
               
             </>
           </div>                 */}
-             
     </>
-    
   );
 }

@@ -24,7 +24,7 @@ const StyledTable = styled(Table)(() => ({
   }
 }));
 
-export default function AllTickets({ view, listView }) {
+export default function AllTickets({ hideTitle, hideStatus }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState([]);
@@ -181,18 +181,14 @@ export default function AllTickets({ view, listView }) {
     }
   };
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const columnDefinitions = [
       {
         accessorKey: "actions",
         header: "Actions",
-        size: 120,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        },
+        size: 80,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" },
         enableSorting: false,
         enableColumnOrdering: false,
         enableEditing: false,
@@ -222,35 +218,80 @@ export default function AllTickets({ view, listView }) {
       {
         accessorKey: "id",
         header: "TicketNo",
-        size: 120,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        }
+        size: 80,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" }
       },
       {
         accessorKey: "docDate",
         header: "Date",
-        size: 90,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        }
+        size: 100,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" }
       },
       {
+        accessorKey: "assignedTo",
+        header: "Assign To",
+        size: 120,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" },
+        Cell: ({ row }) => (
+          <Select
+            value={assignedTo[row.original.id] || ""}
+            onChange={(e) => handleEmployeeChange(e, row.original.id, row)}
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value="" disabled>
+              --Assign To--
+            </MenuItem>
+            {employeedata.map((employee) => (
+              <MenuItem key={employee.id} value={employee.employee}>
+                {employee.employee}
+              </MenuItem>
+            ))}
+          </Select>
+        )
+      },
+      {
+        accessorKey: "priority",
+        header: "Priority",
+        size: 120,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" },
+        Cell: ({ row }) => (
+          <Chip
+            label={row.original.priority}
+            color={
+              row.original.priority === "High"
+                ? "error"
+                : row.original.priority === "Medium"
+                ? "warning"
+                : "success"
+            }
+          />
+        )
+      }
+    ];
+
+    // Conditionally add the "Title" column
+    if (!hideTitle) {
+      columnDefinitions.push({
+        accessorKey: "title",
+        header: "Title",
+        size: 90,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" }
+      });
+    }
+
+    // Conditionally add the "Status" column
+    if (!hideStatus) {
+      columnDefinitions.push({
         accessorKey: "status",
         header: "Status",
         size: 120,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        },
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" },
         Cell: ({ row }) => (
           <Select
             value={selectedStatus[row.original.id] || ""}
@@ -267,59 +308,11 @@ export default function AllTickets({ view, listView }) {
             ))}
           </Select>
         )
-      },
-      {
-        accessorKey: "assignedTo",
-        header: "Assign To",
-        size: 120,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        },
-        Cell: ({ row }) => (
-          <Select
-            value={assignedTo[row.original.id] || ""}
-            onChange={(e) => handleEmployeeChange(e, row.original.id, row)}
-            sx={{ minWidth: 120 }}
-          >
-            {employeedata.map((employee) => (
-              <MenuItem key={employee.id} value={employee.employee}>
-                {employee.employee}
-              </MenuItem>
-            ))}
-          </Select>
-        )
-      },
-      {
-        accessorKey: "title",
-        header: "Title",
-        size: 90,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        }
-      },
-      {
-        accessorKey: "priority",
-        header: "Priority",
-        size: 120,
-        muiTableHeadCellProps: {
-          align: "left"
-        },
-        muiTableBodyCellProps: {
-          align: "left"
-        },
-        Cell: ({ row }) => (
-          <Chip label={row.original.priority} color={getPriorityColor(row.original.priority)} />
-        )
-      }
-    ],
-    [selectedStatus, assignedTo, employeedata]
-  );
+      });
+    }
+
+    return columnDefinitions;
+  }, [selectedStatus, assignedTo, employeedata, hideTitle, hideStatus, statusOptions]);
 
   const UpdateTicket = (ticketId, updatedStatus, updatedEmployee) => {
     const errors = {};
