@@ -9,7 +9,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
-import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,7 +25,11 @@ const Employee = () => {
   const [employee, setEmployee] = useState("");
   const [code, setCode] = useState("");
   const [department, setDepartment] = useState("");
-  const [doj, setDoj] = useState(dayjs());
+  const [branch, setBranch] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [password, setPassword] = useState("");
+  const [doj, setDoj] = useState(null);
+  const [dob, setDob] = useState(null);
   const [viewEmployee, setViewEmployee] = useState(true);
   const [errors, setErrors] = useState({});
 
@@ -53,6 +56,18 @@ const Employee = () => {
         break;
       case "doj":
         setDoj(value);
+        break;
+      case "dob":
+        setDob(value);
+        break;
+      case "branch":
+        setBranch(value);
+        break;
+      case "designation":
+        setDesignation(value);
+        break;
+      case "password":
+        setPassword(value);
         break;
       default:
         break;
@@ -92,7 +107,10 @@ const Employee = () => {
           setEmployee("");
           setCode("");
           setDepartment("");
-          setDoj(dayjs());
+          setBranch("");
+          setDesignation("");
+          setDoj(null);
+          setDob(null);
           toast.success("Employee Created successfully", {
             autoClose: 2000,
             theme: "colored"
@@ -133,64 +151,112 @@ const Employee = () => {
           </div>
 
           {viewEmployee ? (
-            <>
-              <div className="row">
-                <div className="col-md-3 mb-3">
-                  <TextField
-                    id="outlined-textarea"
-                    onChange={handleInputChange}
-                    label="Employee"
-                    name="employee"
-                    value={employee}
-                    placeholder="Placeholder"
-                    multiline
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                  />
-                </div>
-                <div className="col-md-3 mb-3">
-                  <TextField
-                    id="outlined-textarea"
-                    onChange={handleInputChange}
-                    label="Code"
-                    name="code"
-                    value={code}
-                    placeholder="Placeholder"
-                    multiline
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                  />
-                </div>
-                <div className="col-md-3 mb-3">
-                  <TextField
-                    id="outlined-textarea"
-                    label="Department"
-                    name="department"
-                    value={department}
-                    onChange={handleInputChange}
-                    placeholder="Placeholder"
-                    multiline
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                  />
-                </div>
-                <div className="col-md-3 mb-2">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      value={doj}
-                      onChange={(date) => setDoj(date)}
-                      format="DD/MM/YYYY"
-                      slotProps={{
-                        textField: { size: "small", clearable: true }
-                      }}
-                    />
-                  </LocalizationProvider>
-                </div>
+            <div className="row">
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  onChange={handleInputChange}
+                  label="Employee"
+                  name="employee"
+                  value={employee}
+                  placeholder="Placeholder"
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
               </div>
-            </>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  onChange={handleInputChange}
+                  label="Code"
+                  name="code"
+                  value={code}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Department"
+                  name="department"
+                  value={department}
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Branch"
+                  name="branch"
+                  value={branch}
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Designation"
+                  name="designation"
+                  value={designation}
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+              <div className="col-md-3 mb-2">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={dob}
+                    onChange={(date) => setDob(date)}
+                    format="DD/MM/YYYY"
+                    placeholder="DOB"
+                    slotProps={{
+                      textField: { size: "small", clearable: true }
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+              <div className="col-md-3 mb-2">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={doj}
+                    onChange={(date) => setDoj(date)}
+                    format="DD/MM/YYYY"
+                    slotProps={{
+                      textField: { size: "small", clearable: true }
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  label="Password"
+                  name="password"
+                  value={password}
+                  onChange={handleInputChange}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              </div>
+            </div>
           ) : (
             <EmployeeTable />
           )}

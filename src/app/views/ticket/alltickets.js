@@ -1,6 +1,5 @@
-import SaveIcon from "@mui/icons-material/Save";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, MenuItem, Select, Table, styled } from "@mui/material";
+import { Box, Chip, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -169,6 +168,19 @@ export default function AllTickets({ view, listView }) {
     }
   };
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "error"; // Red
+      case "Medium":
+        return "warning"; // Yellow
+      case "Low":
+        return "success"; // Green
+      default:
+        return "default";
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -186,7 +198,7 @@ export default function AllTickets({ view, listView }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-            <SaveIcon
+            {/* <SaveIcon
               size="1.3rem"
               stroke={1}
               onClick={() =>
@@ -197,7 +209,7 @@ export default function AllTickets({ view, listView }) {
                 )
               }
               style={{ cursor: "pointer" }}
-            />
+            /> */}
             <VisibilityIcon
               size="1.3rem"
               style={{ cursor: "pointer" }}
@@ -245,6 +257,9 @@ export default function AllTickets({ view, listView }) {
             onChange={(e) => handleStatusChange(e, row.original.id, row)}
             sx={{ minWidth: 120 }}
           >
+            <MenuItem value="" disabled>
+              --Status--
+            </MenuItem>
             {statusOptions.map((option) => (
               <MenuItem key={option} value={option}>
                 {option}
@@ -297,7 +312,10 @@ export default function AllTickets({ view, listView }) {
         },
         muiTableBodyCellProps: {
           align: "left"
-        }
+        },
+        Cell: ({ row }) => (
+          <Chip label={row.original.priority} color={getPriorityColor(row.original.priority)} />
+        )
       }
     ],
     [selectedStatus, assignedTo, employeedata]
@@ -334,49 +352,8 @@ export default function AllTickets({ view, listView }) {
   };
 
   return (
-    // <div className="customized-container backgroundclr">
     <div className="">
-      <div className="flex justify-between mt-1 mb-1">
-        {/* <h6 class="ticketheader mt-1">
-          <center>Tickets</center>
-        </h6> */}
-      </div>
-      {/* <h3 className="text-2xl font-semibold mt-4">Tickets</h3> */}
-      {/* <div className="justify-content-end mt-4"> */}
-
-      {listView ? (
-        <>
-          {/* <div
-            className="d-flex flex-wrap content-end"
-            style={{
-              position: "absolute",
-              left: 900
-            }}
-          >
-            <button>
-              <IoMdClose
-                // style={{ }}
-                onClick={() => {
-                  view(false);
-                }}
-              />
-            </button>
-          </div> */}
-        </>
-      ) : (
-        <div className="d-flex flex-row">
-          {/* <Link to="/dashboard/default">
-            <FaArrowCircleLeft
-              className="cursor-pointer w-8 h-8"
-              style={{
-                position: "absolute",
-                left: 900,
-                fontSize: "30px"
-              }}
-            />
-          </Link> */}
-        </div>
-      )}
+      <div className="flex justify-between mt-1 mb-1"></div>
       <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-2">
           <MaterialReactTable
