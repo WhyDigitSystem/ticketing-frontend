@@ -28,8 +28,7 @@ const ContentBox = styled(JustifyBox)(() => ({
 }));
 
 const JWTRegister = styled(JustifyBox)(() => ({
-  // background: "#1A2038",
-  background: "linear-gradient(to right, #3498db, #2ecc71)",
+  background: "#1A2038",
   minHeight: "100vh !important",
   "& .card": {
     maxWidth: 800,
@@ -47,6 +46,7 @@ const initialValues = {
   password: "",
   username: "",
   type: "Customer",
+  company: "",
   remember: true
 };
 
@@ -57,7 +57,8 @@ const validationSchema = Yup.object().shape({
     .required("Password is required!"),
   email: Yup.string().email("Invalid Email address").required("Email is required!"),
   username: Yup.string().required("Username is required!"),
-  type: Yup.string().required("User type is required!")
+  type: Yup.string().required("User type is required!"),
+  company: Yup.string().required("Company is required!")
 });
 
 export default function JwtRegister() {
@@ -73,6 +74,7 @@ export default function JwtRegister() {
       password: "",
       username: "",
       type: "Customer",
+      company: "",
       remember: true
     };
   };
@@ -86,7 +88,8 @@ export default function JwtRegister() {
       email: values.email,
       password: encryptPassword(values.password),
       userName: values.email,
-      type: values.type
+      type: values.type,
+      company: values.company
     };
 
     try {
@@ -141,8 +144,8 @@ export default function JwtRegister() {
             <ContentBox>
               <img
                 width="100%"
-                // alt="Register"
-                // src="/assets/images/illustrations/posting_photo.svg"
+                alt="Register"
+                src="/assets/images/illustrations/posting_photo.svg"
               />
             </ContentBox>
           </Grid>
@@ -197,6 +200,20 @@ export default function JwtRegister() {
                       onChange={handleChange}
                       helperText={touched.password && errors.password}
                       error={Boolean(errors.password && touched.password)}
+                      sx={{ mb: 2 }}
+                    />
+                    <TextField
+                      fullWidth
+                      size="small"
+                      name="company"
+                      type="text"
+                      label="Company"
+                      variant="outlined"
+                      onBlur={handleBlur}
+                      value={values.company}
+                      onChange={handleChange}
+                      helperText={touched.company && errors.company}
+                      error={Boolean(errors.company && touched.company)}
                       sx={{ mb: 2 }}
                     />
 

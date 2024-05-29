@@ -21,7 +21,6 @@ const ContentBox = styled("div")(() => ({
   padding: "32px",
   position: "relative",
   background: "rgba(0, 0, 0, 0.01)"
-   
 }));
 
 const StyledRoot = styled("div")(() => ({
@@ -61,8 +60,8 @@ const initialValues = {
 const validationSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, "Password must be 6 character length")
-    .required("Password is required!"),
-  email: Yup.string().email("Invalid Email address").required("Email is required!")
+    .required("Password is required!")
+  // email: Yup.string().email("Invalid Email address").required("Email is required!")
 });
 
 export default function JwtLogin() {
@@ -161,15 +160,15 @@ export default function JwtLogin() {
                     <TextField
                       fullWidth
                       size="small"
-                      type="email"
+                      // type="email"
                       name="email"
                       label="Email"
                       variant="outlined"
                       onBlur={handleBlur}
                       value={values.email}
                       onChange={handleChange}
-                      helperText={touched.email && errors.email}
-                      error={Boolean(errors.email && touched.email)}
+                      // helperText={touched.email && errors.email}
+                      // error={Boolean(errors.email && touched.email)}
                       sx={{ mb: 3 }}
                     />
 
