@@ -25,7 +25,7 @@ const Ticket = () => {
 
   const [createdby, setCreatedBy] = useState("admin");
   const [modifiedby, setModifiedBy] = useState("admin");
-  const [client, setClient] = useState("Casio");
+  const [client, setClient] = useState(localStorage.getItem("company"));
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
@@ -33,6 +33,7 @@ const Ticket = () => {
   const [errors, setErrors] = useState({});
   const [listView, setListView] = useState(false);
   const [files, setFiles] = useState([]);
+  const [userType, setUserType] = useState(localStorage.getItem("userType"));
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleInputChange = (event) => {
@@ -144,7 +145,7 @@ const Ticket = () => {
       <div className="card w-full p-3 bg-base-100 shadow-lg customized-container">
         {!listView && (
           <div className="flex justify-between mb-3">
-            <h7 className="ticketheader">New Ticket</h7>
+            <h5 className="">New Ticket</h5>
           </div>
         )}
 
@@ -267,7 +268,11 @@ const Ticket = () => {
             </div>
           </div>
         ) : (
-          <AllTickets view={handleBack} listView={listView} />
+          <AllTickets
+            view={handleBack}
+            listView={listView}
+            hideStatus={userType === "Customer" ? true : ""}
+          />
         )}
       </div>
     </>

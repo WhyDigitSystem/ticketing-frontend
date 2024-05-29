@@ -1,6 +1,7 @@
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Chip, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import EmailConfig from "app/utils/SendMail";
 import axios from "axios";
 import dayjs from "dayjs";
 import { MaterialReactTable } from "material-react-table";
@@ -29,7 +30,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState([]);
   const [employeedata, setEmployeeData] = useState([]);
-  const [statusOptions] = useState(["Assigned", "Rejected"]);
+  const [statusOptions] = useState(["Inprogress", "Completed", "rejected"]);
   const [selectedStatus, setSelectedStatus] = useState({});
   const [edit, setEdit] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
@@ -49,6 +50,16 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [openImageModal, setOpenImageModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [selectedTicket, setSelectedTicket] = useState({});
+  const [selectedEmployeeCode, setSelectedEmployeeCode] = useState({});
+  const [message, setMessage] = useState("");
+  const [clientName, setClientName] = useState();
+  const [toEmail, setToEmail] = useState("");
+  const [sendMail, setSendEmail] = useState(false);
+  const [employeeName, setEmployeeName] = useState("");
+  const [ticketData, setTicketData] = useState("");
+
+  const userType = localStorage.getItem("userType");
+  const userId = localStorage.getItem("userId");
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -88,7 +99,11 @@ export default function AllTickets({ hideTitle, hideStatus }) {
 
   const getTicketData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllTicket`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicketByAssignedTo?empCode=${
+          userType === "Customer" ? localStorage.getItem("company") : userId
+        }&userType=${userType}`
+      );
 
       if (response.status === 200) {
         console.log("Ticket Data:", response.data.paramObjectsMap.ticketVO);
@@ -97,7 +112,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         const initialAssignTo = {};
         response.data.paramObjectsMap.ticketVO.forEach((ticket) => {
           initialStatus[ticket.id] = ticket.status || "";
-          initialAssignTo[ticket.id] = ticket.assignedTo || "";
+          initialAssignTo[ticket.id] = ticket.assignedToEmp || "";
         });
         setSelectedStatus(initialStatus);
         setAssignedTo(initialAssignTo);
@@ -112,12 +127,17 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const handleStatusChange = (e, ticketId) => {
     const newStatus = { ...selectedStatus, [ticketId]: e.target.value };
     setSelectedStatus(newStatus);
+    UpdateStatus(ticketId, e.target.value, selectedEmployeeCode[ticketId]); // Pass the updated status and employee code
   };
 
   const handleEmployeeChange = (e, ticketId, row) => {
+    const selectedEmployee = employeedata.find((emp) => emp.employee === e.target.value);
     const newEmployee = { ...assignedTo, [ticketId]: e.target.value };
+    const newEmployeeCode = { ...selectedEmployeeCode, [ticketId]: selectedEmployee.code };
     setAssignedTo(newEmployee);
-    UpdateTicket(ticketId, selectedStatus[ticketId], e.target.value); // Call UpdateTicket with new employee value
+    setSelectedEmployeeCode(newEmployeeCode);
+    setToEmail(selectedEmployee.email);
+    UpdateTicket(ticketId, selectedStatus[ticketId], e.target.value, selectedEmployee.code); // Call UpdateTicket with new employee value and code
   };
 
   const handleEditRow = (row) => {
@@ -194,18 +214,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-            {/* <SaveIcon
-              size="1.3rem"
-              stroke={1}
-              onClick={() =>
-                UpdateTicket(
-                  row.original.id,
-                  selectedStatus[row.original.id],
-                  assignedTo[row.original.id]
-                )
-              }
-              style={{ cursor: "pointer" }}
-            /> */}
             <VisibilityIcon
               size="1.3rem"
               style={{ cursor: "pointer" }}
@@ -228,29 +236,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         size: 100,
         muiTableHeadCellProps: { align: "left" },
         muiTableBodyCellProps: { align: "left" }
-      },
-      {
-        accessorKey: "assignedTo",
-        header: "Assign To",
-        size: 120,
-        muiTableHeadCellProps: { align: "left" },
-        muiTableBodyCellProps: { align: "left" },
-        Cell: ({ row }) => (
-          <Select
-            value={assignedTo[row.original.id] || ""}
-            onChange={(e) => handleEmployeeChange(e, row.original.id, row)}
-            sx={{ minWidth: 120 }}
-          >
-            <MenuItem value="" disabled>
-              --Assign To--
-            </MenuItem>
-            {employeedata.map((employee) => (
-              <MenuItem key={employee.id} value={employee.employee}>
-                {employee.employee}
-              </MenuItem>
-            ))}
-          </Select>
-        )
       },
       {
         accessorKey: "priority",
@@ -311,10 +296,37 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       });
     }
 
-    return columnDefinitions;
-  }, [selectedStatus, assignedTo, employeedata, hideTitle, hideStatus, statusOptions]);
+    // Conditionally add the "Assign To" column based on userType
+    if (userType !== "Employee" && userType !== "Customer") {
+      columnDefinitions.push({
+        accessorKey: "assignedTo",
+        header: "Assign To",
+        size: 120,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" },
+        Cell: ({ row }) => (
+          <Select
+            value={assignedTo[row.original.id] || ""}
+            onChange={(e) => handleEmployeeChange(e, row.original.id, row)}
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value="" disabled>
+              --Assign To--
+            </MenuItem>
+            {employeedata.map((employee) => (
+              <MenuItem key={employee.id} value={employee.employee}>
+                {employee.employee}
+              </MenuItem>
+            ))}
+          </Select>
+        )
+      });
+    }
 
-  const UpdateTicket = (ticketId, updatedStatus, updatedEmployee) => {
+    return columnDefinitions;
+  }, [selectedStatus, assignedTo, employeedata, hideTitle, hideStatus, statusOptions, userType]);
+
+  const UpdateTicket = (ticketId, updatedStatus, updatedEmployee, employeeCode) => {
     const errors = {};
     if (!updatedStatus) errors.status = "Status is required";
     if (!updatedEmployee) errors.assignedTo = "Assigned To is required";
@@ -323,7 +335,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       const formData = {
         modifiedby,
         status: updatedStatus,
-        assignedTo: updatedEmployee,
+        assignedTo: employeeCode,
+        assignedToEmployee: updatedEmployee,
         id: ticketId
       };
 
@@ -332,6 +345,48 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         .then((response) => {
           console.log("Response:", response.data);
           toast.success("Ticket Assigned successfully", {
+            autoClose: 2000,
+            theme: "colored"
+          });
+          setEmployeeName(updatedEmployee);
+          setTitle(response.data.paramObjectsMap.ticketAssign.title);
+          setDescription(response.data.paramObjectsMap.ticketAssign.description);
+          setPriority(response.data.paramObjectsMap.ticketAssign.priority);
+          setMessage(
+            `You receive a new ticket from ${response.data.paramObjectsMap.ticketAssign.client}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
+          );
+          console.log("TicktAsign", response.data.paramObjectsMap.ticketAssign.title);
+
+          handleSendEmail();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      setErrors(errors);
+    }
+  };
+
+  const handleSendEmail = () => {
+    setSendEmail(true);
+  };
+
+  const UpdateStatus = (ticketId, updatedStatus, employeeCode) => {
+    const errors = {};
+    if (!updatedStatus) errors.status = "Status is required";
+
+    if (Object.keys(errors).length === 0) {
+      const formData = {
+        status: updatedStatus,
+        empCode: userId,
+        id: ticketId
+      };
+
+      axios
+        .put(`${process.env.REACT_APP_API_URL}/api/ticket/ChangeTicketStatus`, formData)
+        .then((response) => {
+          console.log("Response:", response.data);
+          toast.success("Status Updated successfully", {
             autoClose: 2000,
             theme: "colored"
           });
@@ -384,6 +439,17 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         title={selectedTicket.title}
         assignedTo={selectedTicket.assignedTo}
       />
+
+      {sendMail && (
+        <EmailConfig
+          updatedEmployee={employeeName}
+          toEmail={toEmail}
+          message={message}
+          title={title}
+          description={description}
+          priority={priority}
+        />
+      )}
     </div>
   );
 }

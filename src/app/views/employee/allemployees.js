@@ -1,9 +1,10 @@
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, Table, styled } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { Box, Button, Modal, Table, TextField, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
 import { MaterialReactTable } from "material-react-table";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -22,6 +23,17 @@ const StyledTable = styled(Table)(() => ({
   }
 }));
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  // boxShadow: 24,
+  p: 4
+};
+
 export default function EmployeeTable({ view, listView }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -32,8 +44,9 @@ export default function EmployeeTable({ view, listView }) {
   const [edit, setEdit] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [errors, setErrors] = useState({});
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState({});
   const theme = useTheme();
-  const anchorRef = useRef(null);
 
   useEffect(() => {
     getEmployeeData();
@@ -64,6 +77,55 @@ export default function EmployeeTable({ view, listView }) {
     setSelectedStatus(newStatus);
   };
 
+  const handleEditClick = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenEditModal(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedEmployee((prevEmployee) => ({
+      ...prevEmployee,
+      [name]: value
+    }));
+  };
+
+  const handleEditSubmit = async () => {
+    const encryptedPassword = encryptPassword(selectedEmployee.password);
+    const updatedEmployee = {
+      ...selectedEmployee,
+      password: encryptedPassword
+    };
+
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/employee/updateEmployee`,
+        updatedEmployee
+      );
+
+      if (response.status === 200) {
+        toast.success("Employee Updated Successfully", {
+          autoClose: 2000,
+          theme: "colored"
+        });
+        getEmployeeData(); // Refresh the employee data after successful update
+        setOpenEditModal(false); // Close the modal
+      } else {
+        console.error("API Error:", response.data);
+        toast.error("Failed to Update Employee", {
+          autoClose: 2000,
+          theme: "colored"
+        });
+      }
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      toast.error("Error Updating Employee", {
+        autoClose: 2000,
+        theme: "colored"
+      });
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -81,23 +143,17 @@ export default function EmployeeTable({ view, listView }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-            {/* <SaveIcon
-              size="1.3rem"
-              stroke={1}
-              onClick={() => updateEmployeeStatus(row.original.id, selectedStatus[row.original.id])}
-              style={{ cursor: "pointer" }}
-            /> */}
-            <VisibilityIcon
+            <EditIcon
               size="1.3rem"
               style={{ cursor: "pointer" }}
               stroke={1}
-              onClick={() => viewEmployeeDetails(row.original.id)}
+              onClick={() => handleEditClick(row.original)}
             />
           </div>
         )
       },
       {
-        accessorKey: "id",
+        accessorKey: "code",
         header: "Employee ID",
         size: 120,
         muiTableHeadCellProps: {
@@ -118,41 +174,17 @@ export default function EmployeeTable({ view, listView }) {
           align: "left"
         }
       },
-      //   {
-      //     accessorKey: "status",
-      //     header: "Status",
-      //     size: 120,
-      //     muiTableHeadCellProps: {
-      //       align: "left"
-      //     },
-      //     muiTableBodyCellProps: {
-      //       align: "left"
-      //     },
-      //     Cell: ({ row }) => (
-      //       <Select
-      //         value={selectedStatus[row.original.id] || ""}
-      //         onChange={(e) => handleStatusChange(e, row.original.id)}
-      //         sx={{ minWidth: 120 }}
-      //       >
-      //         {statusOptions.map((option) => (
-      //           <MenuItem key={option} value={option}>
-      //             {option}
-      //           </MenuItem>
-      //         ))}
-      //       </Select>
-      //     )
-      //   },
-      //   {
-      //     accessorKey: "email",
-      //     header: "Email",
-      //     size: 120,
-      //     muiTableHeadCellProps: {
-      //       align: "left"
-      //     },
-      //     muiTableBodyCellProps: {
-      //       align: "left"
-      //     }
-      //   },
+      {
+        accessorKey: "email",
+        header: "Email",
+        size: 120,
+        muiTableHeadCellProps: {
+          align: "left"
+        },
+        muiTableBodyCellProps: {
+          align: "left"
+        }
+      },
       {
         accessorKey: "department",
         header: "Department",
@@ -167,36 +199,6 @@ export default function EmployeeTable({ view, listView }) {
     ],
     [selectedStatus]
   );
-
-  const updateEmployeeStatus = (employeeId, updatedStatus) => {
-    const errors = {};
-    if (!updatedStatus) errors.status = "Status is required";
-
-    if (Object.keys(errors).length === 0) {
-      const formData = {
-        status: updatedStatus,
-        id: employeeId
-      };
-
-      axios
-        .put(`${process.env.REACT_APP_API_URL}/api/employee/updateStatus`, formData)
-        .then((response) => {
-          toast.success("Employee status updated successfully", {
-            autoClose: 2000,
-            theme: "colored"
-          });
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    } else {
-      setErrors(errors);
-    }
-  };
-
-  const viewEmployeeDetails = (employeeId) => {
-    // Implement view employee details logic here
-  };
 
   return (
     <div className="">
@@ -227,6 +229,54 @@ export default function EmployeeTable({ view, listView }) {
           <ToastContainer />
         </div>
       </div>
+
+      <Modal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <h4 id="modal-modal-title">Edit Employee</h4>
+          <TextField
+            label="Employee ID"
+            name="code"
+            value={selectedEmployee.code || ""}
+            onChange={handleEditChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Name"
+            name="employee"
+            value={selectedEmployee.employee || ""}
+            onChange={handleEditChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Department"
+            name="department"
+            value={selectedEmployee.department || ""}
+            onChange={handleEditChange}
+            fullWidth
+            margin="normal"
+          />
+          <Box mt={2} display="flex" justifyContent="flex-end">
+            <Button onClick={() => setOpenEditModal(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditSubmit}
+              color="primary"
+              variant="contained"
+              style={{ marginLeft: "10px" }}
+            >
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 }

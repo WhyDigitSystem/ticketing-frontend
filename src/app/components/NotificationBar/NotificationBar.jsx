@@ -1,22 +1,22 @@
-import { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  Box,
-  Card,
-  Icon,
-  Badge,
-  Button,
-  Drawer,
-  styled,
-  IconButton,
-  ThemeProvider
-} from "@mui/material";
 import { Clear, Notifications } from "@mui/icons-material";
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Chip,
+  Drawer,
+  Icon,
+  IconButton,
+  ThemeProvider,
+  styled
+} from "@mui/material";
+import { Fragment, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import useSettings from "app/hooks/useSettings";
-import useNotification from "app/hooks/useNotification";
-import { getTimeDifference } from "app/utils/utils.js";
 import { sideNavWidth, topBarHeight } from "app/utils/constant";
+import axios from "axios";
 import { themeShadows } from "../MatxTheme/themeColors";
 import { Paragraph, Small } from "../Typography";
 
@@ -82,14 +82,80 @@ const Heading = styled("span")(({ theme }) => ({
 export default function NotificationBar({ container }) {
   const { settings } = useSettings();
   const [panelOpen, setPanelOpen] = useState(false);
-  const { deleteNotification, clearNotifications, notifications } = useNotification();
+  const [empCode, setEmpCode] = useState(localStorage.getItem("userId"));
+  const [notification, setNotification] = useState([]);
+
+  useEffect(() => {
+    getNotification();
+  }, []);
+
+  const getNotification = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicketNotification?empCode=${empCode}`
+      );
+      console.log("API Response:", response);
+
+      if (response.status === 200) {
+        setNotification(response.data.paramObjectsMap.ticketVO);
+
+        console.log("Notification", response.data.paramObjectsMap.ticketVO);
+      } else {
+        // Handle error
+        console.error("API Error:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const deleteNotification = async (id) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/ticket/changeMflag?id=${id}`
+      );
+      if (response.status === 200) {
+        getNotification();
+      } else {
+      }
+    } catch (error) {
+      console.error("Error updating country:", error);
+    }
+  };
+
+  const deleteAllNotification = async (empCode) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/ticket/changeMflagforAllTicket?empCode=${empCode}`
+      );
+      if (response.status === 200) {
+        getNotification();
+      } else {
+      }
+    } catch (error) {
+      console.error("Error updating country:", error);
+    }
+  };
 
   const handleDrawerToggle = () => setPanelOpen(!panelOpen);
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "Normal":
+        return "success";
+      case "Medium":
+        return "warning";
+      case "High":
+        return "error";
+      default:
+        return "default";
+    }
+  };
 
   return (
     <Fragment>
       <IconButton onClick={handleDrawerToggle}>
-        <Badge color="secondary" badgeContent={notifications?.length}>
+        <Badge color="secondary" badgeContent={notification?.length}>
           <Notifications sx={{ color: "text.primary" }} />
         </Badge>
       </IconButton>
@@ -102,53 +168,55 @@ export default function NotificationBar({ container }) {
           anchor={"right"}
           open={panelOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}>
+          ModalProps={{ keepMounted: true }}
+        >
           <Box sx={{ width: sideNavWidth }}>
             <Notification>
               <Notifications color="primary" />
               <h5>Notifications</h5>
             </Notification>
 
-            {notifications?.map((notification) => (
+            {notification?.map((notification) => (
               <NotificationCard key={notification.id}>
                 <DeleteButton
                   size="small"
                   className="deleteButton"
-                  onClick={() => deleteNotification(notification.id)}>
+                  onClick={() => deleteNotification(notification.id)}
+                >
                   <Clear className="icon" />
                 </DeleteButton>
 
-                <Link
-                  to={`/${notification.path}`}
-                  onClick={handleDrawerToggle}
-                  style={{ textDecoration: "none" }}>
+                <Link onClick={handleDrawerToggle} style={{ textDecoration: "none" }}>
                   <Card sx={{ mx: 2, mb: 3 }} elevation={3}>
                     <CardLeftContent>
                       <Box display="flex">
-                        <Icon className="icon" color={notification.icon.color}>
-                          {notification.icon.name}
+                        <Icon className="icon" color={"primary"}>
+                          {"chat"}
                         </Icon>
-                        <Heading>{notification.heading}</Heading>
+                        <Heading>New Ticket</Heading>
                       </Box>
-
-                      <Small className="messageTime">
-                        {getTimeDifference(new Date(notification.timestamp))}
-                        ago
-                      </Small>
                     </CardLeftContent>
 
                     <Box px={2} pt={1} pb={2}>
-                      <Paragraph m={0}>{notification.title}</Paragraph>
-                      <Small color="text.secondary">{notification.subtitle}</Small>
+                      <Paragraph m={0}>You got a new ticket No {notification.id}</Paragraph>
+                      <Small color="text.secondary">{notification.title}</Small>
+                      <br />
+                      <Small color="text.secondary">Priority : </Small>
+                      <Chip
+                        label={`${notification.priority}`}
+                        color={getPriorityColor(notification.priority)}
+                        size="small"
+                      />
                     </Box>
                   </Card>
                 </Link>
               </NotificationCard>
             ))}
 
-            {!!notifications?.length && (
+            {notification?.length > 0 && (
               <Box color="text.secondary">
-                <Button onClick={clearNotifications}>Clear Notifications</Button>
+                <Button onClick={() => deleteAllNotification(empCode)}>Clear Notifications</Button>
+
               </Box>
             )}
           </Box>

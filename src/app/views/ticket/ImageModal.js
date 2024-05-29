@@ -1,6 +1,14 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
-import Button from "@mui/material/Button";
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import Comments from "app/utils/Comment";
 import { useState } from "react";
 
 const ImageModal = ({
@@ -43,52 +51,59 @@ const ImageModal = ({
           <div style={{ padding: "16px", backgroundColor: "#f9f9f9", borderRadius: "8px" }}>
             <Box
               sx={{
-                padding: "16px",
-                backgroundColor: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                marginBottom: "16px"
+                padding: 2,
+                backgroundColor: "background.paper",
+                border: 1,
+                borderColor: "divider",
+                borderRadius: 1,
+                marginBottom: 2,
+                boxShadow: 1
               }}
             >
-              <Typography variant="subtitle1" gutterBottom style={{ color: "#555" }}>
+              <Typography variant="h6" gutterBottom color="text.primary">
                 <strong>Title:</strong> {title}
               </Typography>
-              <Typography variant="body1" paragraph style={{ color: "#555" }}>
+              <Typography variant="body1" paragraph color="text.secondary">
                 <strong>Description:</strong> {description}
               </Typography>
-              <Typography variant="body1" paragraph style={{ color: "#555" }}>
+              <Typography variant="body1" paragraph color="text.secondary">
                 <strong>Priority:</strong> {priority}
               </Typography>
-              <Typography variant="body1" paragraph style={{ color: "#555" }}>
+              <Typography variant="body1" paragraph color="text.secondary">
                 <strong>Status:</strong> {status}
               </Typography>
               {assignedTo && (
-                <Typography variant="body1" paragraph style={{ color: "#555" }}>
+                <Typography variant="body1" paragraph color="text.secondary">
                   <strong>Assigned To:</strong> {assignedTo}
                 </Typography>
               )}
             </Box>
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <div style={{ textAlign: "center", marginTop: "20px", position: "relative" }}>
               <img
                 src={imageUrl}
                 alt="Ticket Image"
-                style={{ maxWidth: "100%", borderRadius: "8px" }}
+                style={{ maxWidth: "80%", borderRadius: "8px" }}
                 onError={(e) => {
                   e.target.style.display = "none"; // Hide the image if an error occurs
                   setButtonHide(true); // Set buttonHide state to true on error
                 }}
               />
               {!buttonHide && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleDownload}
-                  style={{ marginTop: "10px" }}
-                >
-                  Download Image
-                </Button>
+                <Tooltip title="Download" placement="right">
+                  {" "}
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/13434/13434981.png"
+                    width={30}
+                    height={30}
+                    onClick={handleDownload}
+                    style={{ position: "absolute", top: 10, right: 10, cursor: "pointer" }}
+                  />
+                </Tooltip>
               )}
             </div>
+
+            <br></br>
+            <Comments />
           </div>
         ) : (
           <Typography

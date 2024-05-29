@@ -29,6 +29,7 @@ const Employee = () => {
   const [branch, setBranch] = useState("");
   const [designation, setDesignation] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [doj, setDoj] = useState(null);
   const [dob, setDob] = useState(null);
   const [viewEmployee, setViewEmployee] = useState(true);
@@ -39,6 +40,9 @@ const Employee = () => {
     switch (name) {
       case "client":
         setClient(value);
+        break;
+      case "email":
+        setEmail(value);
         break;
       case "createdby":
         setCreatedBy(value);
@@ -80,16 +84,53 @@ const Employee = () => {
   }, []);
 
   const handleClear = useCallback(() => {
+    setClient("");
     setEmployee("");
     setCode("");
     setDepartment("");
+    setBranch("");
+    setDesignation("");
+    setDoj(null);
+    setDob(null);
+    setPassword("");
+    setEmail("");
+    setErrors({});
   }, []);
 
   const handleEmployee = useCallback(() => {
     const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!code) {
       errors.code = "Code is required";
     }
+    if (!employee) {
+      errors.employee = "Employee name is required";
+    }
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
+      errors.email = "Invalid email address";
+    }
+    if (!department) {
+      errors.department = "Department is required";
+    }
+    if (!branch) {
+      errors.branch = "Branch is required";
+    }
+    if (!designation) {
+      errors.designation = "Designation is required";
+    }
+    if (!password) {
+      errors.password = "Password is required";
+    }
+    if (!doj) {
+      errors.doj = "Date of Joining is required";
+    }
+    if (!dob) {
+      errors.dob = "Date of Birth is required";
+    }
+
     if (Object.keys(errors).length === 0) {
       const formData = {
         client,
@@ -97,8 +138,13 @@ const Employee = () => {
         code,
         modifiedby,
         department,
+        email,
         employee,
-        doj
+        branch,
+        designation,
+        doj,
+        dob,
+        password
       };
 
       const encryptedPassword = encryptPassword(formData.password);
@@ -115,14 +161,7 @@ const Employee = () => {
           formDataWithEncryptedPassword
         )
         .then((response) => {
-          setClient("");
-          setEmployee("");
-          setCode("");
-          setDepartment("");
-          setBranch("");
-          setDesignation("");
-          setDoj(null);
-          setDob(null);
+          handleClear();
           toast.success("Employee Created successfully", {
             autoClose: 2000,
             theme: "colored"
@@ -134,8 +173,21 @@ const Employee = () => {
     } else {
       setErrors(errors);
     }
-  }, [client, createdby, code, modifiedby, department, employee, doj]);
-
+  }, [
+    client,
+    createdby,
+    code,
+    modifiedby,
+    department,
+    employee,
+    branch,
+    designation,
+    doj,
+    email,
+    dob,
+    password,
+    handleClear
+  ]);
   return (
     <div className="card w-full p-3 bg-base-100 shadow-lg customized-container">
       <div>
@@ -143,8 +195,7 @@ const Employee = () => {
       </div>
       {viewEmployee && (
         <div>
-          {" "}
-          <h6 className="ticketheader">New Employee</h6>
+          <h5 className="">New Employee</h5>
         </div>
       )}
       <div className="" style={{ padding: "20px" }}>
@@ -183,6 +234,8 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.employee}
+                  helperText={errors.employee}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -196,6 +249,23 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.code}
+                  helperText={errors.code}
+                />
+              </div>
+              <div className="col-md-3 mb-3">
+                <TextField
+                  id="outlined-textarea"
+                  onChange={handleInputChange}
+                  label="Email"
+                  name="email"
+                  value={email}
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -209,6 +279,8 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.department}
+                  helperText={errors.department}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -222,6 +294,8 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.branch}
+                  helperText={errors.branch}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -235,6 +309,8 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.designation}
+                  helperText={errors.designation}
                 />
               </div>
               <div className="col-md-3 mb-2">
@@ -245,7 +321,12 @@ const Employee = () => {
                     format="DD/MM/YYYY"
                     placeholder="DOB"
                     slotProps={{
-                      textField: { size: "small", clearable: true }
+                      textField: {
+                        size: "small",
+                        clearable: true,
+                        error: !!errors.dob,
+                        helperText: errors.dob
+                      }
                     }}
                   />
                 </LocalizationProvider>
@@ -257,7 +338,12 @@ const Employee = () => {
                     onChange={(date) => setDoj(date)}
                     format="DD/MM/YYYY"
                     slotProps={{
-                      textField: { size: "small", clearable: true }
+                      textField: {
+                        size: "small",
+                        clearable: true,
+                        error: !!errors.doj,
+                        helperText: errors.doj
+                      }
                     }}
                   />
                 </LocalizationProvider>
@@ -273,6 +359,8 @@ const Employee = () => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  error={!!errors.password}
+                  helperText={errors.password}
                 />
               </div>
             </div>
