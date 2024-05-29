@@ -100,8 +100,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const getTicketData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicketByAssignedTo?empCode=${
-          userType === "Customer" ? localStorage.getItem("company") : userId
+        `${process.env.REACT_APP_API_URL}/api/ticket/getAllTicketByAssignedTo?empCode=${userType === "Customer" ? localStorage.getItem("company") : userId
         }&userType=${userType}`
       );
 
@@ -162,7 +161,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
             priority: row.original.priority,
             status: row.original.status,
             title: row.original.title,
-            assignedTo: row.original.assignedTo
+            assignedTo: row.original.assignedTo,
+            ticketId: row.original.id,
           });
           setOpenImageModal(true);
         } else {
@@ -250,8 +250,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
               row.original.priority === "High"
                 ? "error"
                 : row.original.priority === "Medium"
-                ? "warning"
-                : "success"
+                  ? "warning"
+                  : "success"
             }
           />
         )
@@ -435,6 +435,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         onClose={() => setOpenImageModal(false)}
         description={selectedTicket.description}
         priority={selectedTicket.priority}
+        ticketId={selectedTicket.ticketId}
         status={selectedTicket.status}
         title={selectedTicket.title}
         assignedTo={selectedTicket.assignedTo}

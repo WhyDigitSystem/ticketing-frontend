@@ -1,4 +1,4 @@
-import { Button, Card, styled } from "@mui/material";
+import { Card, styled } from "@mui/material";
 import { convertHexToRGB } from "app/utils/utils";
 
 // STYLED COMPONENTS
@@ -31,16 +31,16 @@ export default function UpgradeCard() {
         <img src="/assets/images/illustrations/upgrade.svg" alt="upgrade" />
 
         <Paragraph>
-          Upgrade to <b>MatX PRO</b> for <br /> more resources
+          Next Realese on <b>June 06 2024</b>
         </Paragraph>
 
-        <Button
+        {/* <Button
           size="large"
           color="primary"
           variant="contained"
           sx={{ textTransform: "uppercase" }}>
           upgrade now
-        </Button>
+        </Button> */}
       </StyledCard>
     </CardRoot>
   );

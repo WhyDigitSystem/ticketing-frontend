@@ -1,4 +1,4 @@
-import { ExpandLess, StarOutline, TrendingUp } from "@mui/icons-material";
+import { ExpandLess, TrendingUp } from "@mui/icons-material";
 import { Card, Fab, Grid, lighten, styled, useTheme } from "@mui/material";
 
 // STYLED COMPONENTS
@@ -55,11 +55,11 @@ export default function StatCards2() {
               <TrendingUp color="success" />
             </FabIcon>
 
-            <H3 color="#08ad6c">Active Users</H3>
+            <H3 color="#08ad6c">Active Employees</H3>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
-            <H1>10.8k</H1>
+            <H1>54</H1>
 
             <IconBox sx={{ backgroundColor: "success.main" }}>
               <ExpandLess className="icon" />
@@ -73,15 +73,15 @@ export default function StatCards2() {
       <Grid item xs={12} md={6}>
         <Card elevation={3} sx={{ p: 2 }}>
           <ContentBox>
-            <FabIcon size="medium" sx={{ backgroundColor: bgError, overflow: "hidden" }}>
-              <StarOutline color="error" />
+            <FabIcon size="medium" sx={{ background: "rgba(9, 182, 109, 0.15)" }}>
+              <TrendingUp color="success" />
             </FabIcon>
 
-            <H3 color="error.main">Transactions</H3>
+            <H3 color="error.main">Active Customers</H3>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
-            <H1>$2.8M</H1>
+            <H1>56</H1>
 
             <IconBox sx={{ backgroundColor: "error.main" }}>
               <ExpandLess className="icon" />

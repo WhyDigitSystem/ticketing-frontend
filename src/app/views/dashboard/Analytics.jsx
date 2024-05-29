@@ -3,11 +3,9 @@ import { Fragment } from "react";
 import AllTickets from "../ticket/alltickets";
 import Campaigns from "./shared/Campaigns";
 import DoughnutChart from "./shared/Doughnut";
-import RowCards from "./shared/RowCards";
 import StatCards from "./shared/StatCards";
 import StatCards2 from "./shared/StatCards2";
 import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
@@ -44,18 +42,18 @@ export default function Analytics() {
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
-            <TopSellingTable  hideStatus={true} />
-            {/* <AllTickets hideTitle={true} hideStatus={true} /> */}
-            <br></br>
             <StatCards2 />
+            {/* <TopSellingTable  hideStatus={true} /> */}
+            <AllTickets hideStatus={true} />
+            <br></br>
 
-            <H4>Ongoing Projects</H4>
-            <RowCards />
+            {/* <H4>Ongoing Projects</H4>
+            <RowCards /> */}
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
             <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Traffic Sources</Title>
+              <Title>Ticket Status</Title>
               <SubTitle>Last 30 days</SubTitle>
 
               <DoughnutChart

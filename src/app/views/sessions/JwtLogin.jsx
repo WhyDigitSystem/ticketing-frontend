@@ -120,6 +120,8 @@ export default function JwtLogin() {
         // Handle authentication failure, display an error message, etc.
         localStorage.setItem("userType", response.data.paramObjectsMap.userVO.type);
         localStorage.setItem("userName", response.data.paramObjectsMap.userVO.firstName);
+        localStorage.setItem("userId", response.data.paramObjectsMap.userVO.userName);
+        localStorage.setItem("company", response.data.paramObjectsMap.userVO.company);
 
         navigate("/dashboard/default");
       } else {
@@ -144,7 +146,7 @@ export default function JwtLogin() {
         <Grid container>
           <Grid item sm={6} xs={12}>
             <div className="img-wrapper">
-              {/* <img src="/assets/images/illustrations/dreamer.svg" width="100%" alt="" /> */}
+              <img src="/assets/images/login-image.jpg" width="100%" alt="" />
             </div>
           </Grid>
 

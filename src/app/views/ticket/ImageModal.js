@@ -19,9 +19,11 @@ const ImageModal = ({
   priority,
   status,
   title,
-  assignedTo
+  assignedTo, ticketId
 }) => {
   const [buttonHide, setButtonHide] = useState(false);
+
+  console.log("imageTest", ticketId)
 
   const handleDownload = () => {
     if (imageUrl) {
@@ -63,17 +65,17 @@ const ImageModal = ({
               <Typography variant="h6" gutterBottom color="text.primary">
                 <strong>Title:</strong> {title}
               </Typography>
-              <Typography variant="body1" paragraph color="text.secondary">
+              <Typography variant="body1" paragraph color="text.primary">
                 <strong>Description:</strong> {description}
               </Typography>
-              <Typography variant="body1" paragraph color="text.secondary">
+              <Typography variant="body1" paragraph color="text.primary">
                 <strong>Priority:</strong> {priority}
               </Typography>
-              <Typography variant="body1" paragraph color="text.secondary">
+              <Typography variant="body1" paragraph color="text.primary">
                 <strong>Status:</strong> {status}
               </Typography>
               {assignedTo && (
-                <Typography variant="body1" paragraph color="text.secondary">
+                <Typography variant="body1" paragraph color="text.primary">
                   <strong>Assigned To:</strong> {assignedTo}
                 </Typography>
               )}
@@ -103,7 +105,7 @@ const ImageModal = ({
             </div>
 
             <br></br>
-            <Comments />
+            <Comments ticketId={ticketId} />
           </div>
         ) : (
           <Typography

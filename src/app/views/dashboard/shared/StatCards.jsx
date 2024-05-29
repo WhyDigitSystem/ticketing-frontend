@@ -1,5 +1,5 @@
-import { ArrowRightAlt, AttachMoney, ShoppingCart, Store } from "@mui/icons-material";
-import { Box, Card, Grid, IconButton, styled, Tooltip } from "@mui/material";
+import { ArrowRightAlt, AttachMoney } from "@mui/icons-material";
+import { Box, Card, Grid, IconButton, Tooltip, styled } from "@mui/material";
 import { Link } from "react-router-dom";
 // import "./statcard.css";
 // import "./statcard1.css";
@@ -37,9 +37,9 @@ export default function StatCards() {
   const cardList = [
     // { name: "New Ticket" , path: "app/views/ticket/ticket" , Icon: AttachMoney   },
     { name: "Ticket", amount: "/ticket/ticket", Icon: "addbox" },
-    { name: "All Tickets", amount: "/ticket/alltickets", Icon: AttachMoney },
-    { name: "Pending", amount: "8.5% Stock Surplus", Icon: Store },
-    { name: "Orders to deliver", amount: "305 Orders", Icon: ShoppingCart }
+    { name: "All Tickets", amount: "/ticket/alltickets", Icon: AttachMoney }
+    // { name: "Pending", amount: "8.5% Stock Surplus", Icon: Store },
+    // { name: "Orders to deliver", amount: "305 Orders", Icon: ShoppingCart }
   ];
 
   return (

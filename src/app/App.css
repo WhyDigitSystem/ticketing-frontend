@@ -9,3 +9,8 @@
 .mouse-cursor {
   cursor: pointer;
 }
+
+.avatar span {
+  font-weight: bold;
+  font-size: 16px;
+}
