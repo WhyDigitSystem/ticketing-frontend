@@ -1,5 +1,5 @@
-import { useState, Fragment } from "react";
 import { Icon, IconButton, styled } from "@mui/material";
+import { Fragment, useState } from "react";
 
 import { topBarHeight } from "app/utils/constant";
 
@@ -41,7 +41,13 @@ export default function MatxSearchBox() {
     <Fragment>
       {!open && (
         <IconButton onClick={toggle}>
-          <Icon sx={{ color: "text.primary" }}>search</Icon>
+          {/* <Icon sx={{ color: "text.primary" }}>search</Icon> */}
+          <img
+            src="https://cdn-icons-gif.flaticon.com/8718/8718007.gif"
+            width={35}
+            height={35}
+            alt="Notification Gif"
+          />
         </IconButton>
       )}
 

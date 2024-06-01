@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { default as TextArea, default as TextField } from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
+import EmailConfig from "app/utils/SendMail";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
@@ -35,6 +36,9 @@ const Ticket = () => {
   const [files, setFiles] = useState([]);
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [emailFlag, setEmailFlag] = useState(false);
+  const [message, setMessage] = useState("");
+  const [ticketResponse, setTicketResponse] = useState({}); // New state to hold ticket response
 
   const handleInputChange = (event) => {
     const { name, value, files: newFiles } = event.target;
@@ -96,12 +100,16 @@ const Ticket = () => {
         .post(`${process.env.REACT_APP_API_URL}/api/ticket/createticket`, formData)
         .then((response) => {
           console.log("Response:", response.data);
-          const ticketId = response.data.paramObjectsMap.ticketVO.id;
+          const ticketVO = response.data.paramObjectsMap.ticketVO;
+          setTicketResponse(ticketVO); // Save the response data to state
+          setMessage(
+            `You receive a new ticket from ${response.data.paramObjectsMap.ticketVO.client}, Ticket No : ${ticketVO.id}`
+          );
 
           if (files.length > 0) {
             const uploadData = new FormData();
-            uploadData.append("id", ticketId);
-            Array.from(files).forEach((file, index) => {
+            uploadData.append("id", ticketVO.id);
+            Array.from(files).forEach((file) => {
               uploadData.append(`file`, file);
             });
 
@@ -119,6 +127,7 @@ const Ticket = () => {
           setPriority("");
           setFiles([]);
           setSelectedFiles([]);
+          setEmailFlag(true); // Set email flag to true after setting all other states
           toast.success("Ticket Created successfully", {
             autoClose: 2000,
             theme: "colored"
@@ -156,6 +165,8 @@ const Ticket = () => {
           >
             <Tooltip title="Search" placement="top">
               <SearchIcon size="2rem" stroke={1.5} />
+
+
             </Tooltip>
             <Tooltip title="Clear" placement="top">
               <ClearIcon size="2rem" stroke={1.5} onClick={handleClear} />
@@ -245,15 +256,8 @@ const Ticket = () => {
                 style={{ display: "none" }}
               />
               <label htmlFor="file-input">
-                {/* <Button
-                  variant="contained"
-                  component="span"
-                  style={{ backgroundColor: "black", color: "white" }}
-                >
-                  Upload file
-                </Button> */}
                 <img
-                  src="https://cdn-icons-png.flaticon.com/128/15785/15785038.png"
+                  src="https://cdn-icons-gif.flaticon.com/8121/8121319.gif"
                   width={40}
                   height={40}
                   style={{ cursor: "pointer", marginLeft: "12px" }}
@@ -275,6 +279,16 @@ const Ticket = () => {
           />
         )}
       </div>
+      {emailFlag && (
+        <EmailConfig
+          updatedEmployee={"Admin"}
+          toEmail={"karthikeyan@whydigit.in"}
+          message={message}
+          title={ticketResponse.title}
+          description={ticketResponse.description}
+          priority={ticketResponse.priority}
+        />
+      )}
     </>
   );
 };

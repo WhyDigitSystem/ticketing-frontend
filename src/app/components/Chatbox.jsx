@@ -1,17 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Divider, IconButton, styled, TextField, useTheme } from "@mui/material";
 import { Attachment, Clear, TagFaces } from "@mui/icons-material";
-import ScrollBar from "react-perfect-scrollbar";
-import { H5, H6, Span } from "./Typography";
+import { Avatar, Box, Divider, IconButton, TextField, styled } from "@mui/material";
 import { ChatAvatar } from "app/components";
 import { convertHexToRGB } from "app/utils/utils";
+import { useCallback, useEffect, useState } from "react";
+import ScrollBar from "react-perfect-scrollbar";
+import { H5, H6, Span } from "./Typography";
+
+// Define globalMessageList to store the messages
+let globalMessageList = [];
 
 // STYLED COMPONENTS
 const ChatContainer = styled("div")({
   height: "100%",
   display: "flex",
   flexDirection: "column",
-  background: "#fff"
+  background: "#f0f0f0"
 });
 
 const StyledScrollBar = styled(ScrollBar)({
@@ -23,22 +26,23 @@ const ProfileBox = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "space-between",
   padding: "12px 12px 12px 20px",
-  color: theme.palette.primary.main,
+  color: "#000", // Set text color to black
   background: "#fafafa"
 }));
 
-const ChatStatus = styled("div")(({ theme }) => ({
+const ChatStatus = styled("div")(() => ({
   marginLeft: "12px",
-  color: theme.palette.primary.main,
+  color: "#000", // Set text color to black
   "& h5": {
     marginTop: 0,
     fontSize: "14px",
-    marginBottom: "3px"
+    marginBottom: "3px",
+    color: "#000" // Set text color to black
   },
-  "& span": { fontWeight: "500" }
+  "& span": { fontWeight: "500", color: "#000" } // Set text color to black
 }));
 
-const ChatMessage = styled("div")(({ theme }) => ({
+const ChatMessage = styled("div")(() => ({
   padding: "8px",
   maxWidth: 240,
   fontSize: "14px",
@@ -46,14 +50,14 @@ const ChatMessage = styled("div")(({ theme }) => ({
   marginBottom: "8px",
   whiteSpace: "pre-wrap",
   wordBreak: "break-word",
-  color: theme.palette.primary.main,
+  color: "#000", // Set text color to black
   background: "#fafafa"
 }));
 
-const MessageTime = styled("span")(({ theme }) => ({
+const MessageTime = styled("span")(() => ({
   fontSize: "13px",
   fontWeight: "500",
-  color: theme.palette.primary.main
+  color: "#000" // Set text color to black
 }));
 
 const ChatImgContainer = styled("div")({
@@ -62,7 +66,7 @@ const ChatImgContainer = styled("div")({
   justifyContent: "flex-end"
 });
 
-const ChatImgBox = styled("div")(({ theme }) => ({
+const ChatImgBox = styled("div")(() => ({
   padding: "8px",
   fontSize: "14px",
   maxWidth: 240,
@@ -70,14 +74,11 @@ const ChatImgBox = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
-  color: theme.palette.primary.main,
+  color: "#000", // Set text color to black
   background: "#fafafa"
 }));
 
 const ChatImg = styled("img")(() => ({ width: "40px" }));
-
-// for previewing bot message
-const globalMessageList = [];
 
 export default function Chatbox({ togglePopup }) {
   const [isAlive, setIsAlive] = useState(true);
@@ -221,17 +222,13 @@ export default function Chatbox({ togglePopup }) {
     return () => setIsAlive(false);
   }, [messageList, scrollToBottom]);
 
-  const { palette } = useTheme();
-  const primary = palette.primary.main;
-  const textPrimary = palette.text.primary;
-
   return (
     <ChatContainer>
       <ProfileBox>
         <Box display="flex" alignItems="center">
           <ChatAvatar src="/assets/images/face-2.jpg" status="online" />
           <ChatStatus>
-            <H5>Ryan Todd</H5>
+            <H5>EFIT ADMIN</H5>
             <Span>Active</Span>
           </ChatStatus>
         </Box>
@@ -245,16 +242,17 @@ export default function Chatbox({ togglePopup }) {
             key={ind}
             p="20px"
             display="flex"
-            sx={{ justifyContent: currentUserId === item.contactId && "flex-end" }}>
+            sx={{ justifyContent: currentUserId === item.contactId && "flex-end" }}
+          >
             {currentUserId !== item.contactId && <Avatar src={item.avatar} />}
             <Box ml="12px">
               {currentUserId !== item.contactId && (
-                <H5 mb={0.5} fontSize={14} color={primary}>
+                <H5 mb={0.5} fontSize={14} color="#000">
                   {item.name}
                 </H5>
               )}
               <ChatMessage>{item.text}</ChatMessage>
-              <MessageTime>1 minute ago</MessageTime>
+              {/* <MessageTime>1 minute ago</MessageTime> */}
             </Box>
           </Box>
         ))}
@@ -264,21 +262,20 @@ export default function Chatbox({ togglePopup }) {
           <Box ml="12px">
             <ChatImgBox>
               <ChatImg alt="laptop" src="/assets/images/laptop-1.png" />
-
               <Box ml="12px">
-                <H6 mt={0} mb={0.5}>
+                <H6 mt={0} mb={0.5} color="#000">
                   Asus K555LA.png
                 </H6>
                 <MessageTime>21.5KB</MessageTime>
               </Box>
             </ChatImgBox>
-            <MessageTime>1 minute ago</MessageTime>
+            {/* <MessageTime>1 minute ago</MessageTime> */}
           </Box>
         </ChatImgContainer>
       </StyledScrollBar>
 
       <div>
-        <Divider sx={{ background: `rgba(${convertHexToRGB(textPrimary)}, 0.15)` }} />
+        <Divider sx={{ background: `rgba(${convertHexToRGB("#000")}, 0.15)` }} />
 
         <TextField
           multiline
@@ -288,14 +285,13 @@ export default function Chatbox({ togglePopup }) {
           placeholder="Type here ..."
           onKeyUp={sendMessageOnEnter}
           onChange={(e) => setMessage(e.target.value)}
-          sx={{ "& textarea": { color: primary } }}
+          sx={{ "& textarea": { color: "#000" } }}
           InputProps={{
             endAdornment: (
               <Box display="flex">
                 <IconButton size="small">
                   <TagFaces />
                 </IconButton>
-
                 <IconButton size="small">
                   <Attachment />
                 </IconButton>

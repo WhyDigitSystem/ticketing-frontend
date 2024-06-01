@@ -1,6 +1,8 @@
 import CloseIcon from "@mui/icons-material/Close";
+import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -89,17 +91,22 @@ const ImageModal = ({
                   e.target.style.display = "none"; // Hide the image if an error occurs
                   setButtonHide(true); // Set buttonHide state to true on error
                 }}
+
               />
+
               {!buttonHide && (
                 <Tooltip title="Download" placement="right">
                   {" "}
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/13434/13434981.png"
-                    width={30}
-                    height={30}
+
+
+                  <Button
+                    variant="contained"
+                    color="primary"
                     onClick={handleDownload}
                     style={{ position: "absolute", top: 10, right: 10, cursor: "pointer" }}
-                  />
+                  >
+                    <DownloadIcon />
+                  </Button>
                 </Tooltip>
               )}
             </div>

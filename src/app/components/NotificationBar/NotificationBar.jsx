@@ -1,4 +1,4 @@
-import { Clear, Notifications } from "@mui/icons-material";
+import { Clear } from "@mui/icons-material";
 import {
   Badge,
   Box,
@@ -156,7 +156,12 @@ export default function NotificationBar({ container }) {
     <Fragment>
       <IconButton onClick={handleDrawerToggle}>
         <Badge color="secondary" badgeContent={notification?.length}>
-          <Notifications sx={{ color: "text.primary" }} />
+          <img
+            src="https://cdn-icons-gif.flaticon.com/11919/11919418.gif"
+            width={35}
+            height={35}
+            alt="Notification Gif"
+          />
         </Badge>
       </IconButton>
 
@@ -172,10 +177,15 @@ export default function NotificationBar({ container }) {
         >
           <Box sx={{ width: sideNavWidth }}>
             <Notification>
-              <Notifications color="primary" />
+              {/* <Notifications color="primary" /> */}
+              <img
+                src="https://cdn-icons-gif.flaticon.com/11919/11919418.gif"
+                width={40}
+                height={40}
+                alt="Notification Gif"
+              />
               <h5>Notifications</h5>
             </Notification>
-
             {notification?.map((notification) => (
               <NotificationCard key={notification.id}>
                 <DeleteButton
@@ -216,7 +226,6 @@ export default function NotificationBar({ container }) {
             {notification?.length > 0 && (
               <Box color="text.secondary">
                 <Button onClick={() => deleteAllNotification(empCode)}>Clear Notifications</Button>
-
               </Box>
             )}
           </Box>

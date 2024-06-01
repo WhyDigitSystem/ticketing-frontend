@@ -1,5 +1,7 @@
 import { ExpandLess, TrendingUp } from "@mui/icons-material";
 import { Card, Fab, Grid, lighten, styled, useTheme } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(() => ({
@@ -45,6 +47,25 @@ const IconBox = styled("div")(() => ({
 export default function StatCards2() {
   const { palette } = useTheme();
   const bgError = lighten(palette.error.main, 0.85);
+  const [userData, setUserData] = useState("");
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/user/getEmployeeAndCustomerCount`
+      );
+
+      if (response.status === 200) {
+        setUserData(response.data.paramObjectsMap.userCount);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
 
   return (
     <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -59,7 +80,7 @@ export default function StatCards2() {
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
-            <H1>54</H1>
+            <H1>{userData.totalEmployee}</H1>
 
             <IconBox sx={{ backgroundColor: "success.main" }}>
               <ExpandLess className="icon" />
@@ -81,7 +102,7 @@ export default function StatCards2() {
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
-            <H1>56</H1>
+            <H1>{userData.totalCustomer}</H1>
 
             <IconBox sx={{ backgroundColor: "error.main" }}>
               <ExpandLess className="icon" />

@@ -1,7 +1,10 @@
+
+import AttachmentIcon from '@mui/icons-material/Attachment';
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from '@mui/icons-material/Send';
 import {
     Avatar,
     Box,
@@ -10,6 +13,7 @@ import {
     CardContent,
     Grid,
     IconButton,
+    InputAdornment,
     List,
     ListItem,
     ListItemAvatar,
@@ -25,6 +29,8 @@ const Comments = ({ ticketId }) => {
     const [newComment, setNewComment] = useState("");
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editedCommentText, setEditedCommentText] = useState("");
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [commentImages, setCommentImages] = useState({});
 
     useEffect(() => {
         const getCommentsByTicketId = async () => {
@@ -54,6 +60,31 @@ const Comments = ({ ticketId }) => {
         getCommentsByTicketId();
     }, [ticketId]);
 
+    useEffect(() => {
+        const getAllCommentImages = async () => {
+            try {
+                const promises = comments.map(comment =>
+                    axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllCommentImagesByCommentId?commentId=${comment.id}`)
+                );
+                const responses = await Promise.all(promises);
+                const commentImageMap = {};
+                responses.forEach((response, index) => {
+                    const commentId = comments[index].id;
+                    if (response.status === 200 && response.data.length > 0) {
+                        commentImageMap[commentId] = response.data[0].imageUrl;
+                    }
+                });
+                setCommentImages(commentImageMap);
+
+                console.log("commentImage", commentImages)
+            } catch (error) {
+                console.error("Error fetching comment images:", error);
+            }
+        };
+
+        getAllCommentImages();
+    }, [comments]);
+
     const handleAddComment = () => {
         const errors = {};
         if (!newComment) {
@@ -63,7 +94,7 @@ const Comments = ({ ticketId }) => {
         if (Object.keys(errors).length === 0) {
             const formData = {
                 comment: newComment,
-                commentName: localStorage.getItem("userName"), // Replace with actual user name if available
+                commentName: localStorage.getItem("userName"),
                 commentsTime: new Date().toISOString(),
                 ticketId: ticketId,
                 id: 0,
@@ -76,9 +107,9 @@ const Comments = ({ ticketId }) => {
                 )
                 .then((response) => {
                     const newCommentData = {
-                        id: response.data.id, // Assuming the API returns the new comment's ID
+                        id: response.data.id,
                         comment: newComment,
-                        commentsTime: response.data.commentsTime, // Assuming the API returns the created comment's time
+                        commentsTime: response.data.commentsTime,
                         commentName: localStorage.getItem("userName"),
                         commonDate: response.data.commondate,
                         author: {
@@ -86,11 +117,39 @@ const Comments = ({ ticketId }) => {
                             avatar: "",
                         },
                     };
+
+                    // Update comments state with new comment
                     setComments([...comments, newCommentData]);
                     setNewComment("");
+
+                    // Check if there is a selected image to upload
+                    if (selectedImage) {
+                        const formData = new FormData();
+                        formData.append("commentId", response.data.id); // Assuming the API expects commentId to associate with image
+                        formData.append("file", selectedImage);
+
+                        // Upload image to /api/ticket/uploadCommentImage
+                        axios
+                            .post(
+                                `${process.env.REACT_APP_API_URL}/api/ticket/uploadCommentImage`,
+                                formData,
+                                {
+                                    headers: {
+                                        "Content-Type": "multipart/form-data",
+                                    },
+                                }
+                            )
+                            .then((uploadResponse) => {
+                                console.log("Image uploaded successfully:", uploadResponse);
+                                setSelectedImage(null);
+                            })
+                            .catch((uploadError) => {
+                                console.error("Error uploading image:", uploadError);
+                            });
+                    }
                 })
                 .catch((error) => {
-                    console.error("Error:", error);
+                    console.error("Error creating comment:", error);
                 });
         } else {
             console.error("Validation Error:", errors);
@@ -158,6 +217,10 @@ const Comments = ({ ticketId }) => {
         const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const index = hash % colors.length;
         return colors[index];
+    };
+
+    const handleImageUpload = (event) => {
+        setSelectedImage(event.target.files[0]);
     };
 
     return (
@@ -242,6 +305,17 @@ const Comments = ({ ticketId }) => {
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     variant="outlined"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end" variant="contained"
+                                color="primary"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => document.getElementById('upload-image').click()}>
+                                <AttachmentIcon />
+
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <Button
                     variant="contained"
@@ -249,11 +323,32 @@ const Comments = ({ ticketId }) => {
                     onClick={handleAddComment}
                     style={{ marginLeft: "10px" }}
                 >
-                    Add
+                    <SendIcon />
                 </Button>
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="upload-image"
+                    onChange={handleImageUpload}
+                    style={{ display: "none" }}
+                />
             </Box>
+
+            {selectedImage && (
+                <div className='mt-4' style={{ marginLeft: '10px' }}>
+                    <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        style={{ maxWidth: '150px', maxHeight: '150px' }}
+                    />
+                    <IconButton onClick={() => setSelectedImage(null)} size="small">
+                        <CancelIcon />
+                    </IconButton>
+                </div>
+            )}
         </Box>
     );
 };
 
 export default Comments;
+

@@ -7,23 +7,14 @@ import { NotificationProvider } from "app/contexts/NotificationContext";
 import useAuth from "app/hooks/useAuth";
 import useSettings from "app/hooks/useSettings";
 
-import { MatxMenu, MatxSearchBox } from "app/components";
+import { ChatHead, Chatbox, MatxMenu } from "app/components";
 import { themeShadows } from "app/components/MatxTheme/themeColors";
 import { NotificationBar } from "app/components/NotificationBar";
 import { Span } from "app/components/Typography";
 
 import { topBarHeight } from "app/utils/constant";
 
-import {
-  Home,
-  MailOutline,
-  Menu,
-  Person,
-  PowerSettingsNew,
-  Settings,
-  StarOutline,
-  WebAsset
-} from "@mui/icons-material";
+import { Home, Person, PowerSettingsNew, Settings } from "@mui/icons-material";
 
 // STYLED COMPONENTS
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -104,10 +95,16 @@ const Layout1Topbar = () => {
       <TopbarContainer>
         <Box display="flex">
           <StyledIconButton onClick={handleSidebarToggle}>
-            <Menu />
+            {/* <Menu /> */}
+            <img
+              src="https://cdn-icons-gif.flaticon.com/8121/8121316.gif"
+              width={30}
+              height={30}
+              alt="Notification Gif"
+            />
           </StyledIconButton>
 
-          <IconBox>
+          {/* <IconBox>
             <StyledIconButton>
               <MailOutline />
             </StyledIconButton>
@@ -119,15 +116,30 @@ const Layout1Topbar = () => {
             <StyledIconButton>
               <StarOutline />
             </StyledIconButton>
-          </IconBox>
+          </IconBox> */}
         </Box>
 
         <Box display="flex" alignItems="center">
-          <MatxSearchBox />
+          {/* <MatxSearchBox /> */}
 
           <NotificationProvider>
             <NotificationBar />
           </NotificationProvider>
+
+          <ChatHead
+            icon={
+              <IconButton size="small" sx={{ my: "12px", color: "primary.contrastText" }}>
+                <img
+                  src="	https://cdn-icons-gif.flaticon.com/8716/8716838.gif"
+                  width={30}
+                  height={30}
+                  alt="Notification Gif"
+                />
+              </IconButton>
+            }
+          >
+            <Chatbox />
+          </ChatHead>
 
           {/* <ShoppingCart /> */}
 
@@ -136,7 +148,13 @@ const Layout1Topbar = () => {
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    Hi <strong>{localStorage.getItem("userName")}</strong>
+                    <img
+                      src="https://cdn-icons-gif.flaticon.com/8121/8121295.gif"
+                      width={30}
+                      height={30}
+                      alt="Notification Gif"
+                    />{" "}
+                    <strong>{localStorage.getItem("userName")}</strong>
                   </Span>
                 </Hidden>
                 {/* <Avatar src={user.avatar} sx={{ cursor: "pointer" }} /> */}

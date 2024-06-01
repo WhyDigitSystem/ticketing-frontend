@@ -52,11 +52,14 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [selectedTicket, setSelectedTicket] = useState({});
   const [selectedEmployeeCode, setSelectedEmployeeCode] = useState({});
   const [message, setMessage] = useState("");
+  const [messageNew, setMessageNew] = useState("");
   const [clientName, setClientName] = useState();
   const [toEmail, setToEmail] = useState("");
   const [sendMail, setSendEmail] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
-  const [ticketData, setTicketData] = useState("");
+  const [employeeFromName, setEmployeeFromName] = useState("");
+
+  const [sendMailStatus, setSendEmailStatus] = useState(false);
 
   const userType = localStorage.getItem("userType");
   const userId = localStorage.getItem("userId");
@@ -282,6 +285,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
             value={selectedStatus[row.original.id] || ""}
             onChange={(e) => handleStatusChange(e, row.original.id, row)}
             sx={{ minWidth: 120 }}
+            disabled={selectedStatus[row.original.id] === "Completed"}
+
           >
             <MenuItem value="" disabled>
               --Status--
@@ -385,11 +390,17 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       axios
         .put(`${process.env.REACT_APP_API_URL}/api/ticket/ChangeTicketStatus`, formData)
         .then((response) => {
-          console.log("Response:", response.data);
+          console.log("Response:", response.data.paramObjectsMap.ticketAssign.assignedToEmp);
+          setEmployeeFromName(response.data.paramObjectsMap.ticketAssign.assignedToEmp)
           toast.success("Status Updated successfully", {
             autoClose: 2000,
             theme: "colored"
           });
+          setMessageNew(
+            `Ticket is ${response.data.paramObjectsMap.ticketAssign.status}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
+          );
+
+          setSendEmailStatus(true);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -451,6 +462,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
           priority={priority}
         />
       )}
+
+      {sendMailStatus && <EmailConfig updatedEmployee={"Admin"} message={messageNew} toEmail={"karthikeyan@whydigit.in"} hideBox={true} templateChange={true} employeeName={employeeFromName} />}
     </div>
   );
 }

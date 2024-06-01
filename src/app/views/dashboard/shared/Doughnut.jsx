@@ -40,9 +40,9 @@ export default function DoughnutChart({ height, color = [] }) {
         },
         labelLine: { normal: { show: false } },
         data: [
-          { value: 65, name: "Google" },
-          { value: 20, name: "Facebook" },
-          { value: 15, name: "Others" }
+          { value: 65, name: "Pending" },
+          { value: 20, name: "InPrgress" },
+          { value: 15, name: "Completed" }
         ],
         itemStyle: {
           emphasis: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: "rgba(0, 0, 0, 0.5)" }

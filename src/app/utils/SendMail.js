@@ -1,7 +1,7 @@
 import emailjs from "@emailjs/browser";
 import { useEffect } from "react";
 
-const SendEmail = async (updatedEmployee, toEmail, message, title, description, priority) => {
+const SendEmail = async (updatedEmployee, toEmail, message, title, description, priority, hideBox, templateChange) => {
   try {
     const templateParams = {
       message: message,
@@ -9,12 +9,13 @@ const SendEmail = async (updatedEmployee, toEmail, message, title, description, 
       toEmail: toEmail,
       title: title,
       description: description,
-      priority: priority
+      priority: priority,
+      hideBox: hideBox
     };
 
     const response = await emailjs.send(
       "service_8qh42ww",
-      "template_r6919mo",
+      templateChange ? "template_t4ghl3i" : "template_r6919mo",
       templateParams,
       "pQRJ4zETIeTQcXDrP"
     );
@@ -25,11 +26,11 @@ const SendEmail = async (updatedEmployee, toEmail, message, title, description, 
   }
 };
 
-const EmailConfig = ({ updatedEmployee, toEmail, message, title, description, priority }) => {
+const EmailConfig = ({ updatedEmployee, toEmail, message, title, description, priority, hideBox, templateChange }) => {
   useEffect(() => {
-    SendEmail(updatedEmployee, toEmail, message, title, description, priority);
+    SendEmail(updatedEmployee, toEmail, message, title, description, priority, hideBox, templateChange);
     console.log("function called");
-  }, [updatedEmployee, toEmail, message, title, description, priority]);
+  }, [updatedEmployee, toEmail, message, title, description, priority, hideBox]);
 
   return null;
 };

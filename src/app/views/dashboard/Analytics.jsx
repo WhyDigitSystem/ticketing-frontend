@@ -1,5 +1,5 @@
 import { Card, Grid, styled, useTheme } from "@mui/material";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import AllTickets from "../ticket/alltickets";
 import Campaigns from "./shared/Campaigns";
 import DoughnutChart from "./shared/Doughnut";
@@ -36,13 +36,16 @@ const H4 = styled("h4")(({ theme }) => ({
 export default function Analytics() {
   const { palette } = useTheme();
 
+  const [userType, setUserType] = useState(localStorage.getItem("userType"));
+
   return (
     <Fragment>
       <ContentBox className="analytics">
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
-            <StatCards2 />
+            {userType === "Admin" && <StatCards2 />}
+            {/* {userType === "Admin" && <StatCards3 />} */}
             {/* <TopSellingTable  hideStatus={true} /> */}
             <AllTickets hideStatus={true} />
             <br></br>
@@ -52,10 +55,9 @@ export default function Analytics() {
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Ticket Status</Title>
+            <Card sx={{ px: 1, py: 1, mb: 3 }}>
+              <Title sx={{ px: 2 }}>Ticket Status</Title>
               <SubTitle>Last 30 days</SubTitle>
-
               <DoughnutChart
                 height="300px"
                 color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
