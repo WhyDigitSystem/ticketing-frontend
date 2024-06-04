@@ -1,7 +1,7 @@
 import { Card, Grid, styled, useTheme } from "@mui/material";
-import { Fragment, useState } from "react";
+import axios from "axios";
+import { Fragment, useEffect, useState } from "react";
 import AllTickets from "../ticket/alltickets";
-import Campaigns from "./shared/Campaigns";
 import DoughnutChart from "./shared/Doughnut";
 import StatCards from "./shared/StatCards";
 import StatCards2 from "./shared/StatCards2";
@@ -35,8 +35,29 @@ const H4 = styled("h4")(({ theme }) => ({
 
 export default function Analytics() {
   const { palette } = useTheme();
+  const [userData, setUserData] = useState([]);
+  const [ticketStatusDetails, setTicketStatusDetails] = useState(null);
+  const company = localStorage.getItem("company");
+  const userType = localStorage.getItem("userType");
 
-  const [userType, setUserType] = useState(localStorage.getItem("userType"));
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getTicketStatusByClient?customer=${company}`
+      );
+
+      if (response.status === 200) {
+        setUserData(response.data.paramObjectsMap.ticketVO);
+        setTicketStatusDetails(response.data.paramObjectsMap.ticketStatusDetails[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
 
   return (
     <Fragment>
@@ -45,27 +66,25 @@ export default function Analytics() {
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
             {userType === "Admin" && <StatCards2 />}
-            {/* {userType === "Admin" && <StatCards3 />} */}
-            {/* <TopSellingTable  hideStatus={true} /> */}
             <AllTickets hideStatus={true} />
             <br></br>
-
-            {/* <H4>Ongoing Projects</H4>
-            <RowCards /> */}
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 1, py: 1, mb: 3 }}>
+            <Card sx={{ px: 1, py: 1 }}>
               <Title sx={{ px: 2 }}>Ticket Status</Title>
               <SubTitle>Last 30 days</SubTitle>
-              <DoughnutChart
-                height="300px"
-                color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
-              />
+              {ticketStatusDetails && (
+                <DoughnutChart
+                  height="300px"
+                  color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
+                  data={ticketStatusDetails}
+                />
+              )}
             </Card>
+            <br></br>
 
             <UpgradeCard />
-            <Campaigns />
           </Grid>
         </Grid>
       </ContentBox>

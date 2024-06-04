@@ -1,4 +1,4 @@
-import { ExpandLess, TrendingUp } from "@mui/icons-material";
+import { ExpandLess } from "@mui/icons-material";
 import { Card, Fab, Grid, lighten, styled, useTheme } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ const FabIcon = styled(Fab)(() => ({
   boxShadow: "none !important"
 }));
 
-const H3 = styled("h3")(() => ({
+const H3 = styled("h5")(() => ({
   margin: 0,
   fontWeight: "500",
   marginLeft: "12px"
@@ -72,9 +72,14 @@ export default function StatCards2() {
       <Grid item xs={12} md={6}>
         <Card elevation={3} sx={{ p: 2 }}>
           <ContentBox>
-            <FabIcon size="medium" sx={{ background: "rgba(9, 182, 109, 0.15)" }}>
+            {/* <FabIcon size="medium" sx={{ background: "rgba(9, 182, 109, 0.15)" }}>
               <TrendingUp color="success" />
-            </FabIcon>
+            </FabIcon> */}
+            <img
+              src={"https://cdn-icons-gif.flaticon.com/15374/15374828.gif"}
+              height={45}
+              width={45}
+            ></img>
 
             <H3 color="#08ad6c">Active Employees</H3>
           </ContentBox>
@@ -94,9 +99,15 @@ export default function StatCards2() {
       <Grid item xs={12} md={6}>
         <Card elevation={3} sx={{ p: 2 }}>
           <ContentBox>
-            <FabIcon size="medium" sx={{ background: "rgba(9, 182, 109, 0.15)" }}>
+            {/* <FabIcon size="medium" sx={{ background: "rgba(9, 182, 109, 0.15)" }}>
               <TrendingUp color="success" />
-            </FabIcon>
+            </FabIcon> */}
+
+            <img
+              src={"https://cdn-icons-gif.flaticon.com/12134/12134201.gif"}
+              height={45}
+              width={45}
+            ></img>
 
             <H3 color="error.main">Active Customers</H3>
           </ContentBox>

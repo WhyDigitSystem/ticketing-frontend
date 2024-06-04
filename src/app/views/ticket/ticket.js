@@ -2,7 +2,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBulletedTwoTone";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
-import { Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,7 +13,6 @@ import EmailConfig from "app/utils/SendMail";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import { FaArrowCircleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -153,9 +152,21 @@ const Ticket = () => {
 
       <div className="card w-full p-3 bg-base-100 shadow-lg customized-container">
         {!listView && (
-          <div className="flex justify-between mb-3">
-            <h5 className="">New Ticket</h5>
-          </div>
+          <>
+            <div className="flex justify-between mb-1">
+              <h5 className="">New Ticket</h5>
+            </div>
+            <div className="d-flex flex-row">
+
+              <Link to="/dashboard/default">
+                <Tooltip title="Back" placement="top">
+                  <img src="https://cdn-icons-gif.flaticon.com/7740/7740497.gif" style={{
+                    position: "absolute",
+                    left: 950,
+                    fontSize: "40px"
+                  }} width={40} height={40}></img></Tooltip>
+              </Link>
+            </div></>
         )}
 
         {!listView && (
@@ -181,20 +192,21 @@ const Ticket = () => {
             <Tooltip title="Save" placement="top">
               <SaveIcon size="2rem" stroke={1.5} onClick={handleTicket} />
             </Tooltip>
-            <div className="d-flex flex-row">
-              <Link to="/dashboard/default">
-                <FaArrowCircleLeft
-                  className="cursor-pointer w-8 h-8"
-                  style={{
-                    position: "absolute",
-                    left: 950,
-                    fontSize: "40px"
-                  }}
-                />
-              </Link>
-            </div>
+
           </div>
         )}
+
+        {listView && <>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', }}>
+            <IconButton onClick={() => setListView(false)}>
+              {/* Replace the icon with your back button icon */}
+              <ClearIcon />
+            </IconButton>
+          </Box><AllTickets
+            view={handleBack}
+            listView={listView}
+            hideStatus={userType === "Customer" ? true : ""}
+          /></>}
 
         {!listView ? (
           <div className="row d-flex" style={{ padding: "20px 20px 0px 20px" }}>
@@ -272,11 +284,7 @@ const Ticket = () => {
             </div>
           </div>
         ) : (
-          <AllTickets
-            view={handleBack}
-            listView={listView}
-            hideStatus={userType === "Customer" ? true : ""}
-          />
+          ""
         )}
       </div>
       {emailFlag && (

@@ -202,8 +202,10 @@ export default function EmployeeTable({ view, listView }) {
 
   return (
     <div className="">
+
       <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-2">
+
           <MaterialReactTable
             displayColumnDefOptions={{
               "mrt-row-actions": {

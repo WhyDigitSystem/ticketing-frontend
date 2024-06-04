@@ -1,8 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
-import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
-  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -98,7 +96,7 @@ const ImageModal = ({
                 <Tooltip title="Download" placement="right">
                   {" "}
 
-
+                  {/* 
                   <Button
                     variant="contained"
                     color="primary"
@@ -106,7 +104,9 @@ const ImageModal = ({
                     style={{ position: "absolute", top: 10, right: 10, cursor: "pointer" }}
                   >
                     <DownloadIcon />
-                  </Button>
+                  </Button> */}
+                  <img src="https://cdn-icons-gif.flaticon.com/8121/8121318.gif" onClick={handleDownload} width={40} height={40} style={{ cursor: 'pointer' }}></img>
+
                 </Tooltip>
               )}
             </div>

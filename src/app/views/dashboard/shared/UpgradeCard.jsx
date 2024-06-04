@@ -1,5 +1,7 @@
 import { Card, styled } from "@mui/material";
 import { convertHexToRGB } from "app/utils/utils";
+import Lottie from "lottie-react";
+import rocketAnimation from "./rocket.json";
 
 // STYLED COMPONENTS
 const CardRoot = styled(Card)(({ theme }) => ({
@@ -19,8 +21,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const Paragraph = styled("p")(({ theme }) => ({
   margin: 0,
-  paddingTop: "24px",
-  paddingBottom: "24px",
   color: theme.palette.text.secondary
 }));
 
@@ -28,8 +28,8 @@ export default function UpgradeCard() {
   return (
     <CardRoot>
       <StyledCard elevation={0}>
-        <img src="/assets/images/illustrations/upgrade.svg" alt="upgrade" />
-
+        {/* <img src="/assets/images/illustrations/upgrade.svg" alt="upgrade" /> */}
+        <Lottie animationData={rocketAnimation} loop={true} />
         <Paragraph>
           Next Realese on <b>June 06 2024</b>
         </Paragraph>

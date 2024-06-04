@@ -15,6 +15,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import useSettings from "app/hooks/useSettings";
+import NoRecordsFound from "app/utils/NoRecordsFound";
 import { sideNavWidth, topBarHeight } from "app/utils/constant";
 import axios from "axios";
 import { themeShadows } from "../MatxTheme/themeColors";
@@ -181,6 +182,7 @@ export default function NotificationBar({ container }) {
               <img
                 src="https://cdn-icons-gif.flaticon.com/11919/11919418.gif"
                 width={40}
+                className="mt-2"
                 height={40}
                 alt="Notification Gif"
               />
@@ -223,11 +225,21 @@ export default function NotificationBar({ container }) {
               </NotificationCard>
             ))}
 
-            {notification?.length > 0 && (
+            {notification?.length > 0 ? (
               <Box color="text.secondary">
                 <Button onClick={() => deleteAllNotification(empCode)}>Clear Notifications</Button>
               </Box>
+            ) : (
+              <Box color="text.secondary">
+                <NoRecordsFound message={"No notification Found"} />
+              </Box>
             )}
+
+            {/* {notification?.length < 0 && (
+              <Box color="text.secondary">
+                <NoRecordsFound message={"No notification Found"} />
+              </Box>
+            )} */}
           </Box>
         </Drawer>
       </ThemeProvider>

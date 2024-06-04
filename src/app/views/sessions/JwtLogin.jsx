@@ -1,8 +1,21 @@
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { LoadingButton } from "@mui/lab";
-import { Box, Card, Checkbox, Grid, TextField, styled, useTheme } from "@mui/material";
+import {
+  Box,
+  Card,
+  Checkbox,
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+  styled,
+  useTheme
+} from "@mui/material";
 import { Paragraph } from "app/components/Typography";
 import useAuth from "app/hooks/useAuth";
 import { encryptPassword } from "app/utils/PasswordEnc";
+import { CopyRights } from "app/utils/copyRights";
 import axios from "axios";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -10,6 +23,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
+import LottieAnimation from "./LottieAnimation";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -27,8 +41,8 @@ const StyledRoot = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  // backgroundColor: "#1A2038",
-  background: "linear-gradient(to right, #3498db, #2ecc71)",
+  backgroundColor: "#1A2038",
+  // background: "linear-gradient(to right, #3498db, #2ecc71)",
   minHeight: "100% !important",
   "& .card": {
     maxWidth: 800,
@@ -68,7 +82,7 @@ export default function JwtLogin() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
   // const handleFormSubmit = async (values) => {
@@ -137,6 +151,14 @@ export default function JwtLogin() {
     }
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <StyledRoot>
       <div>
@@ -145,13 +167,21 @@ export default function JwtLogin() {
       <Card className="card">
         <Grid container>
           <Grid item sm={6} xs={12}>
-            <div className="img-wrapper">
-              <img src="/assets/images/login-image.jpg" width="100%" alt="" />
+            <div className="img-wrapper mt-4">
+              {/* <video src="/assets/images/login-animation.gif" width="100%" alt="" /> */}
+              <LottieAnimation />
             </div>
           </Grid>
 
           <Grid item sm={6} xs={12}>
             <ContentBox>
+              <div
+                className="mb-4"
+                style={{ fontFamily: "sans-serif", fontWeight: "700", font: "bold" }}
+              >
+                {" "}
+                <h3>Ticketing Portal</h3>
+              </div>
               <Formik
                 onSubmit={(values) => handleFormSubmit(values)}
                 initialValues={initialValues}
@@ -171,14 +201,14 @@ export default function JwtLogin() {
                       onChange={handleChange}
                       // helperText={touched.email && errors.email}
                       // error={Boolean(errors.email && touched.email)}
-                      sx={{ mb: 3 }}
+                      sx={{ mb: 3, mt: 2 }}
                     />
 
                     <TextField
                       fullWidth
                       size="small"
                       name="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       label="Password"
                       variant="outlined"
                       onBlur={handleBlur}
@@ -187,8 +217,21 @@ export default function JwtLogin() {
                       helperText={touched.password && errors.password}
                       error={Boolean(errors.password && touched.password)}
                       sx={{ mb: 1.5 }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
                     />
-
                     <FlexBox justifyContent="space-between">
                       <FlexBox gap={1}>
                         <Checkbox
@@ -235,6 +278,7 @@ export default function JwtLogin() {
             </ContentBox>
           </Grid>
         </Grid>
+        <CopyRights />
       </Card>
     </StyledRoot>
   );

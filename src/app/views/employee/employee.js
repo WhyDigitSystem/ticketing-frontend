@@ -2,7 +2,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBulletedTwoTone";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
-import { Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -198,6 +198,16 @@ const Employee = () => {
           <h5 className="">New Employee</h5>
         </div>
       )}
+      {!viewEmployee &&
+        <>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', }}>
+            <IconButton onClick={() => setViewEmployee(true)}>
+              {/* Replace the icon with your back button icon */}
+              <ClearIcon />
+            </IconButton>
+          </Box>
+          <EmployeeTable />
+        </>}
       <div className="" style={{ padding: "20px" }}>
         <div className="row d-flex mt-3 ml">
           {viewEmployee && (
@@ -220,7 +230,7 @@ const Employee = () => {
             </div>
           )}
 
-          {viewEmployee ? (
+          {viewEmployee &&
             <div className="row">
               <div className="col-md-3 mb-3">
                 <TextField
@@ -319,13 +329,15 @@ const Employee = () => {
                     value={dob}
                     onChange={(date) => setDob(date)}
                     format="DD/MM/YYYY"
-                    placeholder="DOB"
                     slotProps={{
                       textField: {
                         size: "small",
                         clearable: true,
                         error: !!errors.dob,
-                        helperText: errors.dob
+                        helperText: errors.dob,
+                        inputProps: {
+                          placeholder: "DOB"
+                        }
                       }
                     }}
                   />
@@ -342,12 +354,16 @@ const Employee = () => {
                         size: "small",
                         clearable: true,
                         error: !!errors.doj,
-                        helperText: errors.doj
+                        helperText: errors.doj,
+                        inputProps: {
+                          placeholder: "DOJ"
+                        }
                       }
                     }}
                   />
                 </LocalizationProvider>
               </div>
+
               <div className="col-md-3 mb-3">
                 <TextField
                   id="outlined-textarea"
@@ -364,9 +380,7 @@ const Employee = () => {
                 />
               </div>
             </div>
-          ) : (
-            <EmployeeTable />
-          )}
+          }
         </div>
       </div>
     </div>

@@ -1,8 +1,10 @@
 import { useTheme } from "@mui/material/styles";
 import ReactEcharts from "echarts-for-react";
 
-export default function DoughnutChart({ height, color = [] }) {
+export default function DoughnutChart({ height, color = [], data }) {
   const theme = useTheme();
+
+  const { yetToAssign = 0, inprogress = 0, completed = 0 } = data || {};
 
   const option = {
     legend: {
@@ -18,10 +20,10 @@ export default function DoughnutChart({ height, color = [] }) {
 
     series: [
       {
-        name: "Traffic Rate",
+        name: "Ticket Status",
         type: "pie",
         radius: ["45%", "72.55%"],
-        center: ["50%", "50%"],
+        center: ["50%", "40%"],
         avoidLabelOverlap: false,
         hoverOffset: 5,
         stillShowZeroSum: false,
@@ -34,15 +36,15 @@ export default function DoughnutChart({ height, color = [] }) {
           },
           emphasis: {
             show: true,
-            textStyle: { fontSize: "14", fontWeight: "normal" },
+            textStyle: { fontSize: "12", fontWeight: "normal" },
             formatter: "{b} \n{c} ({d}%)"
           }
         },
         labelLine: { normal: { show: false } },
         data: [
-          { value: 65, name: "Pending" },
-          { value: 20, name: "InPrgress" },
-          { value: 15, name: "Completed" }
+          { value: yetToAssign, name: "YetToAssign" },
+          { value: inprogress, name: "InProgress" },
+          { value: completed, name: "Completed" }
         ],
         itemStyle: {
           emphasis: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: "rgba(0, 0, 0, 0.5)" }

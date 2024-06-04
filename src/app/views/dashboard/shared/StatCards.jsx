@@ -1,4 +1,3 @@
-import { ArrowRightAlt, AttachMoney } from "@mui/icons-material";
 import { Box, Card, Grid, IconButton, Tooltip, styled } from "@mui/material";
 import { Link } from "react-router-dom";
 // import "./statcard.css";
@@ -36,8 +35,16 @@ const Heading = styled("h6")(({ theme }) => ({
 export default function StatCards() {
   const cardList = [
     // { name: "New Ticket" , path: "app/views/ticket/ticket" , Icon: AttachMoney   },
-    { name: "Ticket", amount: "/ticket/ticket", Icon: "addbox" },
-    { name: "All Tickets", amount: "/ticket/alltickets", Icon: AttachMoney }
+    {
+      name: "Ticket",
+      amount: "/ticket/ticket",
+      Icon: "https://cdn-icons-gif.flaticon.com/8112/8112582.gif"
+    },
+    {
+      name: "All Tickets",
+      amount: "/ticket/alltickets",
+      Icon: "https://cdn-icons-gif.flaticon.com/9284/9284534.gif"
+    }
     // { name: "Pending", amount: "8.5% Stock Surplus", Icon: Store },
     // { name: "Orders to deliver", amount: "305 Orders", Icon: ShoppingCart }
   ];
@@ -49,7 +56,7 @@ export default function StatCards() {
           <Grid item xs={12} md={6} key={name}>
             <StyledCard elevation={8}>
               <ContentBox>
-                <Icon className="icon" />
+                <img src={Icon} height={40} width={40}></img>
 
                 <Box ml="12px" style={{ fontSize: "20px" }}>
                   {/* <Small>{name}</Small> */}
@@ -61,7 +68,11 @@ export default function StatCards() {
                 <IconButton>
                   <Link to={amount}>
                     {" "}
-                    <ArrowRightAlt />
+                    <img
+                      src={"https://cdn-icons-gif.flaticon.com/7740/7740503.gif"}
+                      height={40}
+                      width={40}
+                    ></img>
                   </Link>
                 </IconButton>
               </Tooltip>

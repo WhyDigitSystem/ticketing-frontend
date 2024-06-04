@@ -1,4 +1,3 @@
-
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -6,14 +5,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from '@mui/icons-material/Send';
 import {
-    Avatar,
-    Box,
-    Button,
+    Avatar, Box, Button,
     Card,
-    CardContent,
-    Grid,
-    IconButton,
-    InputAdornment,
+    CardContent, Dialog, DialogContent, DialogTitle, Grid, IconButton, InputAdornment,
     List,
     ListItem,
     ListItemAvatar,
@@ -23,6 +17,7 @@ import {
 import axios from "axios";
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from "react";
+import NoRecordsFound from './NoRecordsFound';
 
 const Comments = ({ ticketId }) => {
     const [comments, setComments] = useState([]);
@@ -30,7 +25,10 @@ const Comments = ({ ticketId }) => {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editedCommentText, setEditedCommentText] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
-    const [commentImages, setCommentImages] = useState({});
+    const [selectedImagePreview, setSelectedImagePreview] = useState(null);
+    const [renderFunction, setRenderFunction] = useState(false)
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogImage, setDialogImage] = useState(null);
 
     useEffect(() => {
         const getCommentsByTicketId = async () => {
@@ -49,6 +47,7 @@ const Comments = ({ ticketId }) => {
                             name: comment.commentName,
                             avatar: "",
                         },
+                        images: comment.ticketCommentImageVO.map(image => image.commentImage),
                     }));
                     setComments(fetchedComments);
                 }
@@ -58,32 +57,42 @@ const Comments = ({ ticketId }) => {
         };
 
         getCommentsByTicketId();
-    }, [ticketId]);
+    }, [ticketId, renderFunction]);
 
-    useEffect(() => {
-        const getAllCommentImages = async () => {
-            try {
-                const promises = comments.map(comment =>
-                    axios.get(`${process.env.REACT_APP_API_URL}/api/ticket/getAllCommentImagesByCommentId?commentId=${comment.id}`)
-                );
-                const responses = await Promise.all(promises);
-                const commentImageMap = {};
-                responses.forEach((response, index) => {
-                    const commentId = comments[index].id;
-                    if (response.status === 200 && response.data.length > 0) {
-                        commentImageMap[commentId] = response.data[0].imageUrl;
-                    }
-                });
-                setCommentImages(commentImageMap);
-
-                console.log("commentImage", commentImages)
-            } catch (error) {
-                console.error("Error fetching comment images:", error);
+    const getCommentsByTicketId = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/api/ticket/getCommentsByTicketId?ticketId=${ticketId}`
+            );
+            if (response.status === 200) {
+                const fetchedComments = response.data.map(comment => ({
+                    id: comment.id,
+                    comment: comment.comment,
+                    commentsTime: comment.commentsTime,
+                    commentName: comment.commentName,
+                    commonDate: comment.commondate,
+                    author: {
+                        name: comment.commentName,
+                        avatar: "",
+                    },
+                    images: comment.ticketCommentImageVO.map(image => image.commentImage),
+                }));
+                setComments(fetchedComments);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    };
 
-        getAllCommentImages();
-    }, [comments]);
+    const handleImageClick = (image) => {
+        setDialogImage(image);
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setDialogImage(null);
+    };
 
     const handleAddComment = () => {
         const errors = {};
@@ -116,10 +125,12 @@ const Comments = ({ ticketId }) => {
                             name: localStorage.getItem("userName"),
                             avatar: "",
                         },
+                        images: [], // Initially no images for a new comment
                     };
 
                     // Update comments state with new comment
                     setComments([...comments, newCommentData]);
+                    setRenderFunction(true)
                     setNewComment("");
 
                     // Check if there is a selected image to upload
@@ -142,6 +153,8 @@ const Comments = ({ ticketId }) => {
                             .then((uploadResponse) => {
                                 console.log("Image uploaded successfully:", uploadResponse);
                                 setSelectedImage(null);
+                                setSelectedImagePreview(null); // Clear the preview after upload
+                                getCommentsByTicketId();
                             })
                             .catch((uploadError) => {
                                 console.error("Error uploading image:", uploadError);
@@ -220,7 +233,9 @@ const Comments = ({ ticketId }) => {
     };
 
     const handleImageUpload = (event) => {
-        setSelectedImage(event.target.files[0]);
+        const file = event.target.files[0];
+        setSelectedImage(file);
+        setSelectedImagePreview(URL.createObjectURL(file));
     };
 
     return (
@@ -229,7 +244,7 @@ const Comments = ({ ticketId }) => {
                 Comments
             </Typography>
             {comments.length === 0 ? (
-                <Typography variant="body1">No comments available</Typography>
+                <NoRecordsFound message="No comments Found" />
             ) : (
                 <List>
                     {comments.map((comment) => (
@@ -268,8 +283,21 @@ const Comments = ({ ticketId }) => {
                                                     {comment.comment}
                                                 </Typography>
                                             )}
+                                            {comment.images && comment.images.length > 0 && (
+                                                <Box mt={2}>
+                                                    {comment.images.map((image, index) => (
+                                                        <img
+                                                            key={index}
+                                                            src={`data:image/png;base64,${image}`}
+                                                            alt={`Comment ${comment.id} Image ${index + 1}`}
+                                                            style={{ maxWidth: '150px', maxHeight: '150px', marginRight: '10px', marginTop: '10px', cursor: 'pointer' }}
+                                                            onClick={() => handleImageClick(`data:image/png;base64,${image}`)}
+                                                        />
+                                                    ))}
+                                                </Box>
+                                            )}
                                         </Grid>
-                                        <Grid item xs={12} sm={editingCommentId === comment.id ? 3 : 2} style={{ textAlign: 'right' }}>
+                                        <Grid item>
                                             {editingCommentId === comment.id ? (
                                                 <>
                                                     <IconButton onClick={() => handleSaveEdit(comment.id)}>
@@ -297,58 +325,73 @@ const Comments = ({ ticketId }) => {
                     ))}
                 </List>
             )}
-            <Box mt={2} display="flex" alignItems="center">
-                <TextField
-                    fullWidth
-                    size="small"
-                    label="Add a comment"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    variant="outlined"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end" variant="contained"
-                                color="primary"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => document.getElementById('upload-image').click()}>
-                                <AttachmentIcon />
-
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddComment}
-                    style={{ marginLeft: "10px" }}
-                >
-                    <SendIcon />
-                </Button>
-                <input
-                    type="file"
-                    accept="image/*"
-                    id="upload-image"
-                    onChange={handleImageUpload}
-                    style={{ display: "none" }}
-                />
-            </Box>
-
-            {selectedImage && (
-                <div className='mt-4' style={{ marginLeft: '10px' }}>
+            <TextField
+                fullWidth
+                label="Add a comment"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                multiline
+                // rows={}
+                variant="outlined"
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <label htmlFor="file-upload">
+                                <AttachmentIcon style={{ cursor: "pointer" }} />
+                            </label>
+                            <input
+                                id="file-upload"
+                                type="file"
+                                accept="image/*"
+                                style={{ display: "none" }}
+                                onChange={handleImageUpload}
+                            />
+                        </InputAdornment>
+                    )
+                }}
+                style={{ marginBottom: '10px' }}
+            />
+            {selectedImagePreview && (
+                <Box mt={2}>
+                    <Typography variant="subtitle1">Image Preview:</Typography>
                     <img
-                        src={URL.createObjectURL(selectedImage)}
+                        src={selectedImagePreview}
                         alt="Selected"
-                        style={{ maxWidth: '150px', maxHeight: '150px' }}
+                        style={{ maxWidth: '100px', maxHeight: '100px', marginRight: '10px', marginTop: '10px' }}
                     />
-                    <IconButton onClick={() => setSelectedImage(null)} size="small">
+                </Box>
+            )}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddComment}
+                startIcon={<SendIcon />}
+                disabled={!newComment}
+            >
+                Add Comment
+            </Button>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>
+                    Image Preview
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseDialog}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
                         <CancelIcon />
                     </IconButton>
-                </div>
-            )}
+                </DialogTitle>
+                <DialogContent>
+                    <img src={dialogImage} alt="Preview" style={{ width: '100%', height: 'auto' }} />
+                </DialogContent>
+            </Dialog>
         </Box>
     );
 };
 
 export default Comments;
-

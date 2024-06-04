@@ -1,4 +1,3 @@
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Chip, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import EmailConfig from "app/utils/SendMail";
@@ -30,7 +29,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState([]);
   const [employeedata, setEmployeeData] = useState([]);
-  const [statusOptions] = useState(["Inprogress", "Completed", "rejected"]);
+  const [statusOptions] = useState(["YetToAssign", "Inprogress", "Completed", "rejected"]);
   const [selectedStatus, setSelectedStatus] = useState({});
   const [edit, setEdit] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
@@ -217,12 +216,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-            <VisibilityIcon
-              size="1.3rem"
-              style={{ cursor: "pointer" }}
-              stroke={1}
-              onClick={() => fetchImage(row.original.id, row)}
-            />
+
+            <img src="https://cdn-icons-png.flaticon.com/128/14614/14614615.png" style={{ cursor: "pointer" }} width={40} height={40} onClick={() => fetchImage(row.original.id, row)}></img>
           </div>
         )
       },
@@ -397,7 +392,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
             theme: "colored"
           });
           setMessageNew(
-            `Ticket is ${response.data.paramObjectsMap.ticketAssign.status}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
+            `The following Ticket is ${response.data.paramObjectsMap.ticketAssign.status}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
           );
 
           setSendEmailStatus(true);

@@ -27,9 +27,11 @@ export default function Brand({ children }) {
     <BrandRoot>
       <Box display="flex" alignItems="center">
         <MatxLogo />
+
         <StyledSpan mode={mode} className="sidenavHoverShow">
           EFIT
         </StyledSpan>
+        {/* <img src="/assets/images/efitLogo.png" width={150} height={40}></img> */}
       </Box>
 
       <Box className="sidenavHoverShow" sx={{ display: mode === "compact" ? "none" : "block" }}>
