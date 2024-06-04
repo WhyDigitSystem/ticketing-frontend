@@ -27,6 +27,10 @@ const EmployeeNew = Loadable(lazy(() => import("app/views/employee/employee")));
 
 const AllEmployees = Loadable(lazy(() => import("app/views/employee/allemployees")));
 
+const Invoice = Loadable(lazy(() => import("app/views/po/Invoice")));
+
+
+
 const routes = [
   {
     element: (
@@ -44,6 +48,8 @@ const routes = [
       { path: "/ticket/alltickets", element: <AllTickets /> },
       { path: "/employee/employee", element: <EmployeeNew /> },
       { path: "/ticket/allemployees", element: <AllEmployees /> },
+      { path: "/po/Invoice", element: <Invoice /> },
+
     ]
   },
 

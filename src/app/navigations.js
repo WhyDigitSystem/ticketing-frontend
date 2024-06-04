@@ -3,8 +3,11 @@ const navigationItems = [
   { name: "Dashboard", path: "/dashboard/default", icon: "dashboard" },
   { name: "Ticket", path: "/ticket/ticket", icon: "addbox" },
   // { name: "AllTickets", path: "/ticket/alltickets", icon: "reorder" },
-  { name: "Employee", path: "/employee/employee", icon: "addbox" }
+  { name: "Employee", path: "/employee/employee", icon: "addbox" },
   // { name: "AllEmployees", path: "/ticket/allemployees", icon: "reorder" }
+  { name: "Invoice", path: "/po/Invoice", icon: "addbox" },
+
+
 ];
 
 // Get the user type from localStorage
