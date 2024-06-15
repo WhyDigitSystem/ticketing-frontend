@@ -167,7 +167,13 @@ export default function JwtLogin() {
       <Card className="card">
         <Grid container>
           <Grid item sm={6} xs={12}>
-            <div className="img-wrapper mt-4">
+            {/* <img
+              src="/assets/images/efitLogo.png"
+              className="mt-3 ml-2"
+              width={90}
+              height={50}
+            ></img> */}
+            <div className="img-wrapper mt-3">
               {/* <video src="/assets/images/login-animation.gif" width="100%" alt="" /> */}
               <LottieAnimation />
             </div>
@@ -177,7 +183,11 @@ export default function JwtLogin() {
             <ContentBox>
               <div
                 className="mb-4"
-                style={{ fontFamily: "sans-serif", fontWeight: "700", font: "bold" }}
+                style={{
+                  fontFamily: "Helvetica, Arial, sans-serif",
+                  fontWeight: "700",
+                  font: "bold"
+                }}
               >
                 {" "}
                 <h3>Ticketing Portal</h3>

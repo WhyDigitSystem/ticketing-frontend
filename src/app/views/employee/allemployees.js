@@ -1,5 +1,6 @@
 import EditIcon from "@mui/icons-material/Edit";
 import { Box, Button, Modal, Table, TextField, styled } from "@mui/material";
+import Switch from "@mui/material/Switch";
 import { useTheme } from "@mui/material/styles";
 import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
@@ -77,6 +78,55 @@ export default function EmployeeTable({ view, listView }) {
     setSelectedStatus(newStatus);
   };
 
+  // const handleEditClick = (employee) => {
+  //   setSelectedEmployee(employee);
+  //   setOpenEditModal(true);
+  // };
+
+  // const handleEditChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedEmployee((prevEmployee) => ({
+  //     ...prevEmployee,
+  //     [name]: value
+  //   }));
+  // };
+
+  // const handleEditSubmit = async () => {
+  //   const encryptedPassword = encryptPassword(selectedEmployee.password);
+  //   const updatedEmployee = {
+  //     ...selectedEmployee,
+  //     password: encryptedPassword
+  //   };
+
+  //   try {
+  //     const response = await axios.put(
+  //       `${process.env.REACT_APP_API_URL}/api/employee/updateEmployee`,
+  //       updatedEmployee
+  //     );
+
+  //     if (response.status === 200) {
+  //       toast.success("Employee Updated Successfully", {
+  //         autoClose: 2000,
+  //         theme: "colored"
+  //       });
+  //       getEmployeeData(); // Refresh the employee data after successful update
+  //       setOpenEditModal(false); // Close the modal
+  //     } else {
+  //       console.error("API Error:", response.data);
+  //       toast.error("Failed to Update Employee", {
+  //         autoClose: 2000,
+  //         theme: "colored"
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating employee:", error);
+  //     toast.error("Error Updating Employee", {
+  //       autoClose: 2000,
+  //       theme: "colored"
+  //     });
+  //   }
+  // };
+
   const handleEditClick = (employee) => {
     setSelectedEmployee(employee);
     setOpenEditModal(true);
@@ -126,6 +176,7 @@ export default function EmployeeTable({ view, listView }) {
     }
   };
 
+
   const columns = useMemo(
     () => [
       {
@@ -148,6 +199,7 @@ export default function EmployeeTable({ view, listView }) {
               style={{ cursor: "pointer" }}
               stroke={1}
               onClick={() => handleEditClick(row.original)}
+
             />
           </div>
         )
@@ -264,6 +316,20 @@ export default function EmployeeTable({ view, listView }) {
             fullWidth
             margin="normal"
           />
+          <Box display="flex" alignItems="center" mt={2}>
+            <span>Active</span>
+            <Switch
+              checked={selectedEmployee.active || false}
+              onChange={(e) =>
+                setSelectedEmployee((prevEmployee) => ({
+                  ...prevEmployee,
+                  active: e.target.checked
+                }))
+              }
+              name="active"
+              inputProps={{ "aria-label": "controlled" }}
+            />
+          </Box>
           <Box mt={2} display="flex" justifyContent="flex-end">
             <Button onClick={() => setOpenEditModal(false)} color="secondary">
               Cancel

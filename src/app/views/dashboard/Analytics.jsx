@@ -3,6 +3,7 @@ import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
 import AllTickets from "../ticket/alltickets";
 import DoughnutChart from "./shared/Doughnut";
+import BarChartComponent from "./shared/EmpAvail";
 import StatCards from "./shared/StatCards";
 import StatCards2 from "./shared/StatCards2";
 import UpgradeCard from "./shared/UpgradeCard";
@@ -37,11 +38,22 @@ export default function Analytics() {
   const { palette } = useTheme();
   const [userData, setUserData] = useState([]);
   const [ticketStatusDetails, setTicketStatusDetails] = useState(null);
+  const [employeeTicketDetail, setEmployeeTicketDetail] = useState("");
   const company = localStorage.getItem("company");
   const userType = localStorage.getItem("userType");
 
+  // const employees = [
+  //   { name: "Guhan", activeTickets: 10, completedTickets: 5 },
+  //   { name: "Vasanth", activeTickets: 20, completedTickets: 10 },
+  //   { name: "Mani", activeTickets: 5, completedTickets: 15 },
+  //   { name: "karupu", activeTickets: 12, completedTickets: 16 },
+  //   { name: "Karthi", activeTickets: 5, completedTickets: 15 },
+  //   { name: "Kumar", activeTickets: 15, completedTickets: 15 }
+  // ];
+
   useEffect(() => {
     getUserData();
+    getEmployeeTicketData();
   }, []);
 
   const getUserData = async () => {
@@ -59,6 +71,20 @@ export default function Analytics() {
     }
   };
 
+  const getEmployeeTicketData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getEmployeeTicketStatusCounts`
+      );
+
+      if (response.status === 200) {
+        setEmployeeTicketDetail(response.data.paramObjectsMap.ticketStatusDetails);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
+
   return (
     <Fragment>
       <ContentBox className="analytics">
@@ -66,6 +92,11 @@ export default function Analytics() {
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
             {userType === "Admin" && <StatCards2 />}
+            {userType === "Admin" && (
+              <div style={{ textAlign: "center", marginTop: "50px" }}>
+                <BarChartComponent employees={employeeTicketDetail} />
+              </div>
+            )}
             <AllTickets hideStatus={true} />
             <br></br>
           </Grid>
@@ -85,6 +116,7 @@ export default function Analytics() {
             <br></br>
 
             <UpgradeCard />
+            {/* <RowCards /> */}
           </Grid>
         </Grid>
       </ContentBox>

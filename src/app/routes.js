@@ -1,8 +1,8 @@
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
-import "./style.css"
 import AuthGuard from "./auth/AuthGuard";
 import { authRoles } from "./auth/authRoles";
+import "./style.css";
 
 import Loadable from "./components/Loadable";
 import MatxLayout from "./components/MatxLayout/MatxLayout";
@@ -24,6 +24,7 @@ const TicketNew = Loadable(lazy(() => import("app/views/ticket/ticket")));
 const AllTickets = Loadable(lazy(() => import("app/views/ticket/alltickets")));
 
 const EmployeeNew = Loadable(lazy(() => import("app/views/employee/employee")));
+const Customer = Loadable(lazy(() => import("app/views/customer/allCustomer")));
 
 const AllEmployees = Loadable(lazy(() => import("app/views/employee/allemployees")));
 
@@ -48,6 +49,7 @@ const routes = [
       { path: "/ticket/alltickets", element: <AllTickets /> },
       { path: "/employee/employee", element: <EmployeeNew /> },
       { path: "/ticket/allemployees", element: <AllEmployees /> },
+      { path: "/customer/allCustomer", element: <Customer /> },
       { path: "/po/Invoice", element: <Invoice /> },
 
     ]

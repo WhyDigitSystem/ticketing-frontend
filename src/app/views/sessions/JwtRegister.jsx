@@ -5,11 +5,13 @@ import useAuth from "app/hooks/useAuth";
 import { encryptPassword } from "app/utils/PasswordEnc";
 import axios from "axios";
 import { Formik } from "formik";
+import Lottie from "lottie-react";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
+import SignupLottie from "./signupLottie.json";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -141,13 +143,11 @@ export default function JwtRegister() {
       <Card className="card">
         <Grid container>
           <Grid item sm={6} xs={12}>
-            <ContentBox>
-              <img
-                width="100%"
-                alt="Register"
-                src="/assets/images/illustrations/posting_photo.svg"
-              />
-            </ContentBox>
+            <Lottie
+              animationData={SignupLottie}
+              loop={true}
+              style={{ width: "350px", height: "350px", marginLeft: "8%" }}
+            />
           </Grid>
 
           <Grid item sm={6} xs={12}>

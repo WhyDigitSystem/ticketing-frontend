@@ -56,12 +56,16 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [toEmail, setToEmail] = useState("");
   const [sendMail, setSendEmail] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
   const [employeeFromName, setEmployeeFromName] = useState("");
 
   const [sendMailStatus, setSendEmailStatus] = useState(false);
 
   const userType = localStorage.getItem("userType");
   const userId = localStorage.getItem("userId");
+
+
+
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -125,10 +129,12 @@ export default function AllTickets({ hideTitle, hideStatus }) {
     }
   };
 
-  const handleStatusChange = (e, ticketId) => {
+  const handleStatusChange = (e, ticketId, row) => {
     const newStatus = { ...selectedStatus, [ticketId]: e.target.value };
     setSelectedStatus(newStatus);
     UpdateStatus(ticketId, e.target.value, selectedEmployeeCode[ticketId]); // Pass the updated status and employee code
+    setClientEmail(row.original.email)
+    console.log("TicketRow", row)
   };
 
   const handleEmployeeChange = (e, ticketId, row) => {
@@ -216,7 +222,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-
             <img src="https://cdn-icons-png.flaticon.com/128/14614/14614615.png" style={{ cursor: "pointer" }} width={40} height={40} onClick={() => fetchImage(row.original.id, row)}></img>
           </div>
         )
@@ -256,7 +261,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       }
     ];
 
-    // Conditionally add the "Title" column
     if (!hideTitle) {
       columnDefinitions.push({
         accessorKey: "title",
@@ -267,7 +271,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       });
     }
 
-    // Conditionally add the "Status" column
     if (!hideStatus) {
       columnDefinitions.push({
         accessorKey: "status",
@@ -280,8 +283,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
             value={selectedStatus[row.original.id] || ""}
             onChange={(e) => handleStatusChange(e, row.original.id, row)}
             sx={{ minWidth: 120 }}
-            disabled={selectedStatus[row.original.id] === "Completed"}
-
+            disabled={userType === "Employee" && selectedStatus[row.original.id] === "Completed"}
           >
             <MenuItem value="" disabled>
               --Status--
@@ -296,7 +298,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       });
     }
 
-    // Conditionally add the "Assign To" column based on userType
     if (userType !== "Employee" && userType !== "Customer") {
       columnDefinitions.push({
         accessorKey: "assignedTo",
@@ -325,6 +326,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
 
     return columnDefinitions;
   }, [selectedStatus, assignedTo, employeedata, hideTitle, hideStatus, statusOptions, userType]);
+
 
   const UpdateTicket = (ticketId, updatedStatus, updatedEmployee, employeeCode) => {
     const errors = {};
@@ -394,8 +396,9 @@ export default function AllTickets({ hideTitle, hideStatus }) {
           setMessageNew(
             `The following Ticket is ${response.data.paramObjectsMap.ticketAssign.status}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
           );
-
           setSendEmailStatus(true);
+
+
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -458,7 +461,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         />
       )}
 
-      {sendMailStatus && <EmailConfig updatedEmployee={"Admin"} message={messageNew} toEmail={"karthikeyan@whydigit.in"} hideBox={true} templateChange={true} employeeName={employeeFromName} />}
+      {sendMailStatus && <EmailConfig updatedEmployee={"Admin"} message={messageNew} toEmail={"karthikeyan@whydigit.in"} ccEmail={clientEmail} hideBox={true} templateChange={true} employeeName={employeeFromName} />}
     </div>
   );
 }

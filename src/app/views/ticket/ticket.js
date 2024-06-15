@@ -31,9 +31,10 @@ const Ticket = () => {
   const [priority, setPriority] = useState("");
   const [docdate, setDocDate] = useState(dayjs());
   const [errors, setErrors] = useState({});
-  const [listView, setListView] = useState(false);
+  const [listView, setListView] = useState(localStorage.getItem("userType") === "Employee" ? true : false);
   const [files, setFiles] = useState([]);
   const [userType, setUserType] = useState(localStorage.getItem("userType"));
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [emailFlag, setEmailFlag] = useState(false);
   const [message, setMessage] = useState("");
@@ -92,7 +93,8 @@ const Ticket = () => {
         description,
         modifiedby,
         priority,
-        title
+        title,
+        email: userId
       };
 
       axios
@@ -196,17 +198,25 @@ const Ticket = () => {
           </div>
         )}
 
-        {listView && <>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', }}>
-            <IconButton onClick={() => setListView(false)}>
-              {/* Replace the icon with your back button icon */}
-              <ClearIcon />
-            </IconButton>
-          </Box><AllTickets
-            view={handleBack}
-            listView={listView}
-            hideStatus={userType === "Customer" ? true : ""}
-          /></>}
+        {listView && (
+          <>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {userType !== "Employee" && (
+                <IconButton onClick={() => setListView(false)}>
+                  {/* Replace the icon with your back button icon */}
+                  <ClearIcon />
+                </IconButton>
+              )}
+            </Box>
+            <AllTickets
+              view={handleBack}
+              listView={listView}
+              hideStatus={userType === "Customer"}
+            />
+          </>
+        )}
+
+
 
         {!listView ? (
           <div className="row d-flex" style={{ padding: "20px 20px 0px 20px" }}>

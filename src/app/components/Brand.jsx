@@ -1,6 +1,5 @@
 import { Box, styled } from "@mui/material";
 
-import { MatxLogo } from "app/components";
 import useSettings from "app/hooks/useSettings";
 import { Span } from "./Typography";
 
@@ -26,11 +25,11 @@ export default function Brand({ children }) {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MatxLogo />
+        <img src="/assets/images/efitLogo.png" width={150} height={40}></img>
 
-        <StyledSpan mode={mode} className="sidenavHoverShow">
+        {/* <StyledSpan mode={mode} className="sidenavHoverShow">
           EFIT
-        </StyledSpan>
+        </StyledSpan> */}
         {/* <img src="/assets/images/efitLogo.png" width={150} height={40}></img> */}
       </Box>
 

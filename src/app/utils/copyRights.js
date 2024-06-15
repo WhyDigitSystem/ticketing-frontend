@@ -11,7 +11,7 @@ export const CopyRights = () => {
             }}
         >
             <Typography variant="body2">
-                Copyrights &copy; 2022 - {new Date().getFullYear()} Efit. All Rights Reserved.
+                Copyrights &copy; 2022 - {new Date().getFullYear()} WhyDigits. All Rights Reserved.
             </Typography>
             {/* <Typography variant="body2">
                 Registered in 2022

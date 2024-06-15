@@ -29,6 +29,7 @@ const Comments = ({ ticketId }) => {
     const [renderFunction, setRenderFunction] = useState(false)
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogImage, setDialogImage] = useState(null);
+    const currentUserName = localStorage.getItem("userName"); // Get the current logged-in user's name
 
     useEffect(() => {
         const getCommentsByTicketId = async () => {
@@ -103,7 +104,7 @@ const Comments = ({ ticketId }) => {
         if (Object.keys(errors).length === 0) {
             const formData = {
                 comment: newComment,
-                commentName: localStorage.getItem("userName"),
+                commentName: currentUserName,
                 commentsTime: new Date().toISOString(),
                 ticketId: ticketId,
                 id: 0,
@@ -119,10 +120,10 @@ const Comments = ({ ticketId }) => {
                         id: response.data.id,
                         comment: newComment,
                         commentsTime: response.data.commentsTime,
-                        commentName: localStorage.getItem("userName"),
+                        commentName: currentUserName,
                         commonDate: response.data.commondate,
                         author: {
-                            name: localStorage.getItem("userName"),
+                            name: currentUserName,
                             avatar: "",
                         },
                         images: [], // Initially no images for a new comment
@@ -257,64 +258,64 @@ const Comments = ({ ticketId }) => {
                                                 <Grid item>
                                                     <ListItemAvatar>
                                                         <Avatar alt={comment.author.name} className={`avatar-${comment.author.name.charAt(0).toLowerCase()}`} style={{ backgroundColor: getAvatarColor(comment.author.name) }}>
-                                                            {comment.author.name.charAt(0).toUpperCase()}
+                                                            {comment.author.name.charAt(0)}
                                                         </Avatar>
                                                     </ListItemAvatar>
                                                 </Grid>
                                                 <Grid item>
-                                                    <Typography variant="subtitle1" component="span">
+                                                    <Typography component="span" variant="h6" style={{ fontSize: '1rem' }}>
                                                         {comment.author.name}
                                                     </Typography>
-                                                    <Typography variant="body2" color="textSecondary" component="span" style={{ marginLeft: '10px' }}>
-                                                        {formatDistanceToNow(new Date(comment.commonDate.createdon))} ago
+                                                    <Typography variant="body2" color="textSecondary" component="span" style={{ marginLeft: 8 }}>
+                                                        {formatDistanceToNow(new Date(comment.commentsTime), { addSuffix: true })}
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
-                                            {editingCommentId === comment.id ? (
-                                                <TextField
-                                                    fullWidth
-                                                    size="small"
-                                                    value={editedCommentText}
-                                                    onChange={(e) => setEditedCommentText(e.target.value)}
-                                                    style={{ marginTop: '10px' }}
+                                            <Box mt={1}>
+                                                {editingCommentId === comment.id ? (
+                                                    <TextField
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        value={editedCommentText}
+                                                        onChange={(e) => setEditedCommentText(e.target.value)}
+                                                        multiline
+                                                    />
+                                                ) : (
+                                                    <Typography variant="body1">{comment.comment}</Typography>
+                                                )}
+                                            </Box>
+                                            {comment.images.map((image, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={`data:image/png;base64,${image}`}
+                                                    alt={`Comment ${comment.id} Image ${index + 1}`}
+                                                    style={{ maxWidth: '150px', maxHeight: '150px', marginRight: '10px', marginTop: '10px', cursor: 'pointer' }}
+                                                    onClick={() => handleImageClick(`data:image/png;base64,${image}`)}
                                                 />
-                                            ) : (
-                                                <Typography variant="body1" component="p" style={{ marginTop: '10px' }}>
-                                                    {comment.comment}
-                                                </Typography>
-                                            )}
-                                            {comment.images && comment.images.length > 0 && (
-                                                <Box mt={2}>
-                                                    {comment.images.map((image, index) => (
-                                                        <img
-                                                            key={index}
-                                                            src={`data:image/png;base64,${image}`}
-                                                            alt={`Comment ${comment.id} Image ${index + 1}`}
-                                                            style={{ maxWidth: '150px', maxHeight: '150px', marginRight: '10px', marginTop: '10px', cursor: 'pointer' }}
-                                                            onClick={() => handleImageClick(`data:image/png;base64,${image}`)}
-                                                        />
-                                                    ))}
-                                                </Box>
-                                            )}
+                                            ))}
                                         </Grid>
                                         <Grid item>
-                                            {editingCommentId === comment.id ? (
+                                            {comment.author.name === currentUserName && (
                                                 <>
-                                                    <IconButton onClick={() => handleSaveEdit(comment.id)}>
-                                                        <SaveIcon />
-                                                    </IconButton>
-                                                    <IconButton onClick={handleCancelEdit}>
-                                                        <CancelIcon />
-                                                    </IconButton>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <IconButton onClick={() => handleEditComment(comment)}>
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                    <IconButton onClick={() => handleDeleteComment(comment.id)}>
-                                                        <DeleteIcon />
-                                                    </IconButton>
+                                                    {editingCommentId === comment.id ? (
+                                                        <>
+                                                            <IconButton onClick={() => handleSaveEdit(comment.id)}>
+                                                                <SaveIcon />
+                                                            </IconButton>
+                                                            <IconButton onClick={handleCancelEdit}>
+                                                                <CancelIcon />
+                                                            </IconButton>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <IconButton onClick={() => handleEditComment(comment)}>
+                                                                <EditIcon />
+                                                            </IconButton>
+                                                            <IconButton onClick={() => handleDeleteComment(comment.id)}>
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
                                         </Grid>
@@ -325,69 +326,70 @@ const Comments = ({ ticketId }) => {
                     ))}
                 </List>
             )}
-            <TextField
-                fullWidth
-                label="Add a comment"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                multiline
-                // rows={}
-                variant="outlined"
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <label htmlFor="file-upload">
-                                <AttachmentIcon style={{ cursor: "pointer" }} />
-                            </label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                accept="image/*"
-                                style={{ display: "none" }}
-                                onChange={handleImageUpload}
-                            />
-                        </InputAdornment>
-                    )
-                }}
-                style={{ marginBottom: '10px' }}
-            />
+            <Box display="flex" alignItems="center">
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Add a comment"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    InputProps={{
+                        endAdornment: (
+                            <>
+                                <InputAdornment position="end">
+                                    <input
+                                        accept="image/*"
+                                        style={{ display: "none" }}
+                                        id="comment-image-upload"
+                                        type="file"
+                                        onChange={handleImageUpload}
+                                    />
+                                    <label htmlFor="comment-image-upload">
+                                        <IconButton component="span">
+                                            <AttachmentIcon />
+                                        </IconButton>
+                                    </label>
+                                </InputAdornment>
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleAddComment}>
+                                        <SendIcon />
+                                    </IconButton>
+                                </InputAdornment>
+                            </>
+                        ),
+                    }}
+                />
+            </Box>
             {selectedImagePreview && (
-                <Box mt={2}>
-                    <Typography variant="subtitle1">Image Preview:</Typography>
+                <Box mt={2} display="flex" alignItems="center">
                     <img
                         src={selectedImagePreview}
                         alt="Selected"
-                        style={{ maxWidth: '100px', maxHeight: '100px', marginRight: '10px', marginTop: '10px' }}
+                        style={{ width: "100px", height: "auto", marginRight: "16px" }}
                     />
+                    <Button variant="contained" color="secondary" onClick={() => {
+                        setSelectedImage(null);
+                        setSelectedImagePreview(null);
+                    }}>
+                        Remove
+                    </Button>
                 </Box>
             )}
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddComment}
-                startIcon={<SendIcon />}
-                disabled={!newComment}
-            >
-                Add Comment
-            </Button>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>
-                    Image Preview
-                    <IconButton
-                        aria-label="close"
-                        onClick={handleCloseDialog}
-                        sx={{
-                            position: 'absolute',
-                            right: 8,
-                            top: 8,
-                            color: (theme) => theme.palette.grey[500],
-                        }}
-                    >
-                        <CancelIcon />
-                    </IconButton>
-                </DialogTitle>
+                <DialogTitle>Image Preview  <IconButton
+                    aria-label="close"
+                    onClick={handleCloseDialog}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CancelIcon />
+                </IconButton></DialogTitle>
                 <DialogContent>
-                    <img src={dialogImage} alt="Preview" style={{ width: '100%', height: 'auto' }} />
+                    <img src={dialogImage} alt="Dialog Image" style={{ width: '100%', height: 'auto' }} />
                 </DialogContent>
             </Dialog>
         </Box>
