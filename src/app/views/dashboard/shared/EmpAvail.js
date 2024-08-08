@@ -1,35 +1,33 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const BarChartComponent = ({ employees }) => {
-    const COLORS = ['#0088FE', '#00C49F'];
-
     // Prepare data in a format suitable for BarChart
-    const data = employees && employees.map(employee => ({
+    const data = employees ? employees.map(employee => ({
         name: employee.empName,
-        activeTickets: employee.inprogress,
-        completedTickets: employee.completed
-    }));
+        Active: employee.inprogress,
+        Completed: employee.completed
+    })) : [];
 
     return (
-        <Card style={{ maxWidth: 1200, margin: '0 auto', marginTop: 20 }}>
+        <Card sx={{ maxWidth: '1200px', mx: 'auto', mt: 2, borderRadius: 2, boxShadow: 3, backgroundColor: '#fff' }}>
             <CardContent>
-                <Typography variant="h6" align="left" gutterBottom>
+                <Typography variant="h6" color="text.primary" gutterBottom>
                     Employee Ticket Overview
                 </Typography>
-                <div style={{ width: '100%', height: 400 }}>
-                    <ResponsiveContainer width="100%" height="100%">
+                <Box sx={{ width: '100%', height: 300 }}>
+                    <ResponsiveContainer>
                         <BarChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                            <XAxis dataKey="name" tick={{ fill: '#8884d8' }} />
+                            <YAxis tick={{ fill: '#8884d8' }} />
+                            <Tooltip contentStyle={{ backgroundColor: '#fff', borderColor: '#ddd' }} />
                             <Legend />
-                            <Bar dataKey="activeTickets" fill={COLORS[0]} name="Active Tickets" />
-                            <Bar dataKey="completedTickets" fill={COLORS[1]} name="Completed Tickets" />
+                            <Bar dataKey="Active" fill="#3498db" barSize={30} />
+                            <Bar dataKey="Completed" fill="#4CAF50" barSize={30} />
                         </BarChart>
                     </ResponsiveContainer>
-                </div>
+                </Box>
             </CardContent>
         </Card>
     );

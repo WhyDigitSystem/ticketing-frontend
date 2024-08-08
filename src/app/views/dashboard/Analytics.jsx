@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import AllTickets from "../ticket/alltickets";
 import DoughnutChart from "./shared/Doughnut";
 import BarChartComponent from "./shared/EmpAvail";
+import PieChart from "./shared/PieChart";
 import StatCards from "./shared/StatCards";
 import StatCards2 from "./shared/StatCards2";
 import UpgradeCard from "./shared/UpgradeCard";
@@ -34,6 +35,8 @@ const H4 = styled("h4")(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
+const priorityData = [10, 20, 30];
+
 export default function Analytics() {
   const { palette } = useTheme();
   const [userData, setUserData] = useState([]);
@@ -41,6 +44,7 @@ export default function Analytics() {
   const [employeeTicketDetail, setEmployeeTicketDetail] = useState("");
   const company = localStorage.getItem("company");
   const userType = localStorage.getItem("userType");
+  const [priorityStatusCount, setPriorityStatusCount] = useState("");
 
   // const employees = [
   //   { name: "Guhan", activeTickets: 10, completedTickets: 5 },
@@ -54,6 +58,7 @@ export default function Analytics() {
   useEffect(() => {
     getUserData();
     getEmployeeTicketData();
+    getPriorityStatusCount();
   }, []);
 
   const getUserData = async () => {
@@ -65,6 +70,20 @@ export default function Analytics() {
       if (response.status === 200) {
         setUserData(response.data.paramObjectsMap.ticketVO);
         setTicketStatusDetails(response.data.paramObjectsMap.ticketStatusDetails[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
+
+  const getPriorityStatusCount = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/ticket/getTicketPriorityStatusCount`
+      );
+
+      if (response.status === 200) {
+        setPriorityStatusCount(response.data.paramObjectsMap.ticketPriorityStatusDetails);
       }
     } catch (error) {
       console.error("Error fetching employee data:", error);
@@ -92,31 +111,35 @@ export default function Analytics() {
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
             {userType === "Admin" && <StatCards2 />}
-            {userType === "Admin" && (
+            {userType === "Admin" && employeeTicketDetail.length > 0 && (
               <div style={{ textAlign: "center", marginTop: "50px" }}>
                 <BarChartComponent employees={employeeTicketDetail} />
               </div>
             )}
-            <AllTickets hideStatus={true} />
-            <br></br>
+            {/* <AllTickets hideStatus={true} />
+            <br></br> */}
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 1, py: 1 }}>
-              <Title sx={{ px: 2 }}>Ticket Status</Title>
-              <SubTitle>Last 30 days</SubTitle>
-              {ticketStatusDetails && (
+            {ticketStatusDetails && (
+              <Card sx={{ px: 1, py: 1, mb: 1 }}>
+                <Title sx={{ px: 2 }}>Ticket Status</Title>
+                <SubTitle>Last 30 days</SubTitle>
                 <DoughnutChart
                   height="300px"
                   color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
                   data={ticketStatusDetails}
                 />
-              )}
-            </Card>
-            <br></br>
-
+              </Card>
+            )}
             <UpgradeCard />
             {/* <RowCards /> */}
+            {userType === "Admin" && <PieChart data={priorityStatusCount} />}
+          </Grid>
+
+          <Grid item lg={12} md={12} sm={12} xs={12}>
+            <AllTickets hideStatus={true} />
+            <br></br>
           </Grid>
         </Grid>
       </ContentBox>

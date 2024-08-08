@@ -1,4 +1,5 @@
-import { Box, Chip, MenuItem, Select, Table, styled } from "@mui/material";
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { Box, Chip, FormControl, MenuItem, Select, Table, styled } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import EmailConfig from "app/utils/SendMail";
 import axios from "axios";
@@ -8,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ImageModal from "./ImageModal";
+
 
 // STYLED COMPONENT
 const StyledTable = styled(Table)(() => ({
@@ -60,7 +62,8 @@ export default function AllTickets({ hideTitle, hideStatus }) {
   const [employeeFromName, setEmployeeFromName] = useState("");
 
   const [sendMailStatus, setSendEmailStatus] = useState(false);
-
+  const [statusFilter, setStatusFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('');
   const userType = localStorage.getItem("userType");
   const userId = localStorage.getItem("userId");
 
@@ -171,6 +174,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
             title: row.original.title,
             assignedTo: row.original.assignedTo,
             ticketId: row.original.id,
+            client: row.original.client
           });
           setOpenImageModal(true);
         } else {
@@ -183,6 +187,12 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       console.error("Error fetching the image:", error);
     }
   };
+
+  const handleCloseImgModal = () => {
+
+    setOpenImageModal(false)
+    getTicketData();
+  }
 
   const fetchImageDataAsBlob = async (imageData) => {
     try {
@@ -208,6 +218,20 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         return "default";
     }
   };
+
+  const filteredData = useMemo(() => {
+    return data.filter((ticket) => {
+      // Exclude tickets with "Completed" status initially
+      if (statusFilter === '' && ticket.status === 'Completed') {
+        return false;
+      }
+      // Check if the statusFilter is empty or if it matches the ticket's status
+      return statusFilter === '' || ticket.status === statusFilter;
+    });
+  }, [data, statusFilter]);
+
+
+
 
   const columns = useMemo(() => {
     const columnDefinitions = [
@@ -241,6 +265,43 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         muiTableBodyCellProps: { align: "left" }
       },
       {
+        accessorKey: "client",
+        header: "Client",
+        size: 100,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" }
+      },
+
+      {
+        accessorKey: "status",
+        header: "Status",
+        size: 100,
+        muiTableHeadCellProps: { align: "left" },
+        muiTableBodyCellProps: { align: "left" }
+      },
+
+      // {
+      //   header: 'Days',
+      //   accessorKey: 'docDate',
+      //   size: 80,
+      //   Cell: ({ cell, row }) => {
+      //     const docDate = dayjs(cell.getValue());
+      //     const today = dayjs();
+      //     const diffInDays = today.diff(docDate, 'day');
+
+      //     return row.original.status === "Completed" ? null : (
+      //       <Chip
+      //         label={diffInDays}
+      //         style={{
+      //           backgroundColor: diffInDays > 3 ? 'red' : 'green',
+      //           color: 'white'     
+      //         }}
+      //       />
+      //     );
+      //   }
+      // },
+
+      {
         accessorKey: "priority",
         header: "Priority",
         size: 120,
@@ -270,33 +331,59 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         muiTableBodyCellProps: { align: "left" }
       });
     }
+    const hasNonCompletedStatus = data.some(row => row.status !== "Completed");
 
-    if (!hideStatus) {
+    if (hasNonCompletedStatus) {
       columnDefinitions.push({
-        accessorKey: "status",
-        header: "Status",
-        size: 120,
-        muiTableHeadCellProps: { align: "left" },
-        muiTableBodyCellProps: { align: "left" },
-        Cell: ({ row }) => (
-          <Select
-            value={selectedStatus[row.original.id] || ""}
-            onChange={(e) => handleStatusChange(e, row.original.id, row)}
-            sx={{ minWidth: 120 }}
-            disabled={userType === "Employee" && selectedStatus[row.original.id] === "Completed"}
-          >
-            <MenuItem value="" disabled>
-              --Status--
-            </MenuItem>
-            {statusOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        )
+        header: 'Days',
+        accessorKey: 'docDate',
+        size: 80,
+        Cell: ({ cell, row }) => {
+          const docDate = dayjs(cell.getValue());
+          const today = dayjs();
+          const diffInDays = today.diff(docDate, 'day');
+
+          return row.original.status === "Completed" ? null : (
+            <Chip
+              label={diffInDays}
+              style={{
+                backgroundColor: diffInDays > 3 ? 'red' : 'green',
+                color: 'white'
+              }}
+            />
+          );
+        }
       });
     }
+
+
+
+    // if (!hideStatus) {
+    //   columnDefinitions.push({
+    //     accessorKey: "status",
+    //     header: "Status",
+    //     size: 120,
+    //     muiTableHeadCellProps: { align: "left" },
+    //     muiTableBodyCellProps: { align: "left" },
+    //     Cell: ({ row }) => (
+    //       <Select
+    //         value={selectedStatus[row.original.id] || ""}
+    //         onChange={(e) => handleStatusChange(e, row.original.id, row)}
+    //         sx={{ minWidth: 120 }}
+    //         disabled={userType === "Employee" && selectedStatus[row.original.id] === "Completed"}
+    //       >
+    //         <MenuItem value="" disabled>
+    //           --Status--
+    //         </MenuItem>
+    //         {statusOptions.map((option) => (
+    //           <MenuItem key={option} value={option}>
+    //             {option}
+    //           </MenuItem>
+    //         ))}
+    //       </Select>
+    //     )
+    //   });
+    // }
 
     if (userType !== "Employee" && userType !== "Customer") {
       columnDefinitions.push({
@@ -410,7 +497,6 @@ export default function AllTickets({ hideTitle, hideStatus }) {
 
   return (
     <div className="">
-      <div className="flex justify-between mt-1 mb-1"></div>
       <div className="grid lg:grid-cols-6 md:grid-cols-3 grid-cols-1 gap-6">
         <div className="mt-2">
           <MaterialReactTable
@@ -423,7 +509,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
               }
             }}
             columns={columns}
-            data={data}
+            data={filteredData}
             editingMode="modal"
             renderRowActions={({ row, table }) => (
               <Box
@@ -432,8 +518,74 @@ export default function AllTickets({ hideTitle, hideStatus }) {
                   gap: "1rem",
                   justifyContent: "flex-end"
                 }}
-              ></Box>
+
+              >
+              </Box>
             )}
+            renderTopToolbar={() => (
+              <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2}>
+                <FormControl
+                  variant="outlined"
+                  size="small"
+                  style={{ marginRight: '8px', marginTop: '8px', width: "150px", position: 'relative' }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+                    <FilterListIcon
+                      style={{
+                        position: 'absolute',
+                        left: '10px',
+                        pointerEvents: 'none',
+                        color: 'rgba(0, 0, 0, 0.54)', // Adjust the color if needed
+                      }}
+                    />
+                    <Select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      displayEmpty
+                      style={{ paddingLeft: '30px', width: '200px' }}
+                      renderValue={(selected) => {
+                        if (selected.length === 0) {
+                          return <span style={{ color: 'rgba(0, 0, 0, 0.54)' }}>Filter</span>;
+                        }
+                        return selected;
+                      }}
+                    >
+                      <MenuItem value="" disabled>
+                        Filter
+                      </MenuItem>
+                      <MenuItem value="Inprogress">InProgress</MenuItem>
+                      <MenuItem value="Completed">Completed</MenuItem>
+                      <MenuItem value="YetToAssign">YetToAssign</MenuItem>
+                      <MenuItem value="Rejected">Rejected</MenuItem>
+                    </Select>
+                  </Box>
+                </FormControl>
+
+                {/* <FormControl variant="outlined" size="small" style={{ position: 'relative', marginRight: '8px', marginTop: "10px", width: "150px" }}>
+                  <InputLabel>Priority</InputLabel>
+                  <Select
+                    value={priorityFilter}
+                    onChange={(e) => setPriorityFilter(e.target.value)}
+                    label="Priority"
+                    style={{ paddingLeft: '30px' }} // Add padding to accommodate the icon
+                  >
+                    <MenuItem value="High">High</MenuItem>
+                    <MenuItem value="Medium">Medium</MenuItem>
+                    <MenuItem value="Normal">Normal</MenuItem>
+                  </Select>
+                  <FilterListIcon
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '10px',
+                      transform: 'translateY(-50%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                </FormControl> */}
+              </Box>
+            )}
+
           />
           <ToastContainer />
         </div>
@@ -441,12 +593,13 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       <ImageModal
         open={openImageModal}
         imageUrl={selectedImageUrl}
-        onClose={() => setOpenImageModal(false)}
+        onClose={handleCloseImgModal}
         description={selectedTicket.description}
         priority={selectedTicket.priority}
         ticketId={selectedTicket.ticketId}
         status={selectedTicket.status}
         title={selectedTicket.title}
+        client={selectedTicket.client}
         assignedTo={selectedTicket.assignedTo}
       />
 

@@ -6,7 +6,7 @@ import rocketAnimation from "./rocket.json";
 // STYLED COMPONENTS
 const CardRoot = styled(Card)(({ theme }) => ({
   marginBottom: "24px",
-  padding: "24px !important",
+  padding: "10px !important",
   [theme.breakpoints.down("sm")]: { paddingLeft: "16px !important" }
 }));
 
@@ -27,11 +27,14 @@ const Paragraph = styled("p")(({ theme }) => ({
 export default function UpgradeCard() {
   return (
     <CardRoot>
+      <div>
+        <h6>Info</h6>
+      </div>
       <StyledCard elevation={0}>
         {/* <img src="/assets/images/illustrations/upgrade.svg" alt="upgrade" /> */}
         <Lottie animationData={rocketAnimation} loop={true} />
         <Paragraph>
-          Next Realese on <b>June 06 2024</b>
+          <b>Welcome</b>
         </Paragraph>
 
         {/* <Button

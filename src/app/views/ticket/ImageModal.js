@@ -4,12 +4,18 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Tooltip,
   Typography
 } from "@mui/material";
 import Comments from "app/utils/Comment";
-import { useState } from "react";
+import axios from 'axios';
+import { useEffect, useState } from "react";
+import { toast } from 'react-toastify';
 
 const ImageModal = ({
   open,
@@ -19,11 +25,28 @@ const ImageModal = ({
   priority,
   status,
   title,
-  assignedTo, ticketId
+  client,
+  assignedTo,
+  ticketId,
+  row // Assuming row contains the required row data
 }) => {
   const [buttonHide, setButtonHide] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const userId = localStorage.getItem("userId"); // Assuming you have a user context to get the userId
+  const [clientEmail, setClientEmail] = useState('');
+  const [employeeFromName, setEmployeeFromName] = useState('');
+  const [sendEmailStatus, setSendEmailStatus] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [messageNew, setMessageNew] = useState('');
+  const userType = localStorage.getItem("userType");
 
-  console.log("imageTest", ticketId)
+  const statusOptions = ["Inprogress", "Completed", "YetToAssign", "Rejected"];
+
+  useEffect(() => {
+    if (open) {
+      setSelectedStatus(status); // Set the initial status when the modal opens
+    }
+  }, [status, open]);
 
   const handleDownload = () => {
     if (imageUrl) {
@@ -33,6 +56,47 @@ const ImageModal = ({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+  };
+
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value;
+    setSelectedStatus(newStatus);
+    updateStatus(ticketId, newStatus, row?.original?.employeeCode); // Pass the updated status and employee code
+    setClientEmail(row?.original?.email);
+    console.log("TicketRow", row);
+  };
+
+  const updateStatus = (ticketId, updatedStatus, employeeCode) => {
+    const errors = {};
+    if (!updatedStatus) errors.status = "Status is required";
+
+    if (Object.keys(errors).length === 0) {
+      const formData = {
+        status: updatedStatus,
+        empCode: userId,
+        id: ticketId
+      };
+
+      axios
+        .put(`${process.env.REACT_APP_API_URL}/api/ticket/ChangeTicketStatus`, formData)
+        .then((response) => {
+          console.log("Response:", response.data.paramObjectsMap.ticketAssign.assignedToEmp);
+          setEmployeeFromName(response.data.paramObjectsMap.ticketAssign.assignedToEmp);
+          toast.success("Status Updated successfully", {
+            autoClose: 2000,
+            theme: "colored"
+          });
+          setMessageNew(
+            `The following Ticket is ${response.data.paramObjectsMap.ticketAssign.status}, Ticket No : ${response.data.paramObjectsMap.ticketAssign.id}`
+          );
+          setSendEmailStatus(true);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      setErrors(errors);
     }
   };
 
@@ -62,8 +126,27 @@ const ImageModal = ({
                 boxShadow: 1
               }}
             >
-              <Typography variant="h6" gutterBottom color="text.primary">
-                <strong>Title:</strong> {title}
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" color="text.primary" sx={{ flexGrow: 1 }}>
+                  <strong>Title:</strong> {title}
+                </Typography>
+                {userType === "Customer" ? "" : <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    label="Status"
+                  >
+                    {statusOptions.map(option => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>}
+              </Box>
+              <Typography variant="body1" paragraph color="text.primary">
+                <strong>Client:</strong> {client}
               </Typography>
               <Typography variant="body1" paragraph color="text.primary">
                 <strong>Description:</strong> {description}
@@ -72,7 +155,7 @@ const ImageModal = ({
                 <strong>Priority:</strong> {priority}
               </Typography>
               <Typography variant="body1" paragraph color="text.primary">
-                <strong>Status:</strong> {status}
+                <strong>Status:</strong> {selectedStatus}
               </Typography>
               {assignedTo && (
                 <Typography variant="body1" paragraph color="text.primary">
@@ -89,29 +172,23 @@ const ImageModal = ({
                   e.target.style.display = "none"; // Hide the image if an error occurs
                   setButtonHide(true); // Set buttonHide state to true on error
                 }}
-
               />
 
               {!buttonHide && (
                 <Tooltip title="Download" placement="right">
-                  {" "}
-
-                  {/* 
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <img
+                    src="https://cdn-icons-gif.flaticon.com/8121/8121318.gif"
                     onClick={handleDownload}
-                    style={{ position: "absolute", top: 10, right: 10, cursor: "pointer" }}
-                  >
-                    <DownloadIcon />
-                  </Button> */}
-                  <img src="https://cdn-icons-gif.flaticon.com/8121/8121318.gif" onClick={handleDownload} width={40} height={40} style={{ cursor: 'pointer' }}></img>
-
+                    width={30}
+                    height={30}
+                    style={{ cursor: 'pointer' }}
+                    alt="Download Icon"
+                  />
                 </Tooltip>
               )}
             </div>
 
-            <br></br>
+            <br />
             <Comments ticketId={ticketId} />
           </div>
         ) : (
