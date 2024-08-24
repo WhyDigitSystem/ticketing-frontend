@@ -81,7 +81,7 @@ export default function StatCards2() {
               width={45}
             ></img>
 
-            <H3 color="#08ad6c">Active Employees</H3>
+            <H3 color="#08ad6c">Active Tickets</H3>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
@@ -109,7 +109,7 @@ export default function StatCards2() {
               width={45}
             ></img>
 
-            <H3 color="error.main">Active Customers</H3>
+            <H3 color="error.main">Critical Tickets</H3>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>

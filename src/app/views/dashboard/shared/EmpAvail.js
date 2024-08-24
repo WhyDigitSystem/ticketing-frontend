@@ -23,8 +23,8 @@ const BarChartComponent = ({ employees }) => {
                             <YAxis tick={{ fill: '#8884d8' }} />
                             <Tooltip contentStyle={{ backgroundColor: '#fff', borderColor: '#ddd' }} />
                             <Legend />
-                            <Bar dataKey="Active" fill="#3498db" barSize={30} />
-                            <Bar dataKey="Completed" fill="#4CAF50" barSize={30} />
+                            <Bar dataKey="Active" fill="#3498db" stackId="a" barSize={30} />
+                            <Bar dataKey="Completed" fill="#4CAF50" stackId="a" barSize={30} />
                         </BarChart>
                     </ResponsiveContainer>
                 </Box>

@@ -1,6 +1,4 @@
 import useSettings from "app/hooks/useSettings";
-import SecondarySidebarToggle from "./SecondarySidebarToggle";
-import SecondarySidebarContent from "./SecondarySidebarContent";
 import { SecondarySidenavTheme } from "../MatxTheme/SecondarySidenavTheme";
 
 export default function SecondarySidebar() {
@@ -9,8 +7,8 @@ export default function SecondarySidebar() {
 
   return (
     <SecondarySidenavTheme theme={secondarySidebarTheme}>
-      {settings.secondarySidebar.open && <SecondarySidebarContent />}
-      <SecondarySidebarToggle />
+      {/* {settings.secondarySidebar.open && <SecondarySidebarContent />} */}
+      {/* <SecondarySidebarToggle /> */}
     </SecondarySidenavTheme>
   );
 }

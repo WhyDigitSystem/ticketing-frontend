@@ -26,6 +26,19 @@ const StyledTable = styled(Table)(() => ({
   }
 }));
 
+const smallChipStyle = {
+  height: '12px',
+  width: "12px", // Size of the dot
+  // minWidth: '12px', // Ensures the chip is at least this wide
+  borderRadius: '50%', // Makes the Chip circular
+  padding: '0', // Removes default padding
+  fontSize: '0', // Hides the label text
+  display: 'inline-flex', // Ensures correct alignment
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: 'none', // Optional: remove border
+};
+
 export default function AllTickets({ hideTitle, hideStatus }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -246,21 +259,21 @@ export default function AllTickets({ hideTitle, hideStatus }) {
         enableEditing: false,
         Cell: ({ row }) => (
           <div style={{ display: "flex", gap: "10px" }}>
-            <img src="https://cdn-icons-png.flaticon.com/128/14614/14614615.png" style={{ cursor: "pointer" }} width={40} height={40} onClick={() => fetchImage(row.original.id, row)}></img>
+            <img src="https://cdn-icons-png.flaticon.com/128/709/709612.png" style={{ cursor: "pointer" }} width={30} height={30} onClick={() => fetchImage(row.original.id, row)}></img>
           </div>
         )
       },
       {
         accessorKey: "id",
         header: "TicketNo",
-        size: 80,
+        size: 70,
         muiTableHeadCellProps: { align: "left" },
         muiTableBodyCellProps: { align: "left" }
       },
       {
         accessorKey: "docDate",
         header: "Date",
-        size: 100,
+        size: 90,
         muiTableHeadCellProps: { align: "left" },
         muiTableBodyCellProps: { align: "left" }
       },
@@ -304,12 +317,12 @@ export default function AllTickets({ hideTitle, hideStatus }) {
       {
         accessorKey: "priority",
         header: "Priority",
-        size: 120,
+        size: 100,
         muiTableHeadCellProps: { align: "left" },
         muiTableBodyCellProps: { align: "left" },
         Cell: ({ row }) => (
           <Chip
-            label={row.original.priority}
+            // label={row.original.priority}
             color={
               row.original.priority === "High"
                 ? "error"
@@ -317,6 +330,7 @@ export default function AllTickets({ hideTitle, hideStatus }) {
                   ? "warning"
                   : "success"
             }
+            style={smallChipStyle}
           />
         )
       }
@@ -335,9 +349,9 @@ export default function AllTickets({ hideTitle, hideStatus }) {
 
     if (hasNonCompletedStatus) {
       columnDefinitions.push({
-        header: 'Days',
+        header: 'Due Days',
         accessorKey: 'docDate',
-        size: 80,
+        size: 90,
         Cell: ({ cell, row }) => {
           const docDate = dayjs(cell.getValue());
           const today = dayjs();

@@ -1,10 +1,4 @@
-import { IconButton, styled } from "@mui/material";
-import Comment from "@mui/icons-material/Comment";
-
-import { Chatbox, ChatHead } from "app/components";
-import { Span } from "../Typography";
-import ShoppingCart from "../ShoppingCart";
-import MatxCustomizer from "../MatxCustomizer/MatxCustomizer";
+import { styled } from "@mui/material";
 
 // STYLED COMPONENTS
 const SidebarRoot = styled("div")(({ theme, width }) => ({
@@ -42,7 +36,7 @@ const SidebarRoot = styled("div")(({ theme, width }) => ({
 export default function SecondarySidebarContent() {
   return (
     <SidebarRoot width={"50px"} className="secondary-sidebar">
-      <Span m="auto" />
+      {/* <Span m="auto" />
       <MatxCustomizer />
       <ShoppingCart />
 
@@ -55,7 +49,7 @@ export default function SecondarySidebarContent() {
         <Chatbox />
       </ChatHead>
 
-      <Span m="auto" />
+      <Span m="auto" /> */}
     </SidebarRoot>
   );
 }

@@ -57,7 +57,7 @@ const StyledRoot = styled("div")(() => ({
     height: "100%",
     minWidth: 320,
     display: "flex",
-    padding: "2rem",
+    padding: "0 2rem 2rem",
     alignItems: "center",
     justifyContent: "center"
   }
@@ -167,15 +167,14 @@ export default function JwtLogin() {
       <Card className="card">
         <Grid container>
           <Grid item sm={6} xs={12}>
-            {/* <img
-              src="/assets/images/efitLogo.png"
-              className="mt-3 ml-2"
-              width={90}
-              height={50}
-            ></img> */}
-            <div className="img-wrapper mt-3">
-              {/* <video src="/assets/images/login-animation.gif" width="100%" alt="" /> */}
-              <LottieAnimation />
+            <div style={{ display: "flex", flexDirection: "column", marginLeft: "5%" }}>
+              <div style={{ marginTop: "16px" }}>
+                <img src="/efit_logo.png" height={50} alt="Logo" />
+              </div>
+              <div className="img-wrapper">
+                {/* <video src="/assets/images/login-animation.gif" width="100%" alt="" /> */}
+                <LottieAnimation />
+              </div>
             </div>
           </Grid>
 
